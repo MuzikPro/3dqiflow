@@ -25,7 +25,7 @@
 
 This repository contains the **full 3D engine and structural theory data** (organs, meridian pairs and routes, solar terms, Hetu/Luoshu, acupoint atlas) plus **sample content** so everything runs out of the box.
 
-The complete annotated content set — 96 Shanghan Lun articles with round-motion interpretations, 39 formulas with full animation scripts and derivation trees, complete pulse/tongue atlas, and the 7-stage guided curriculum — is part of the commercial content pack at [3dqiflow.com](https://3dqiflow.com). The engine is designed so content packs drop into `src/data/` without code changes.
+The complete annotated content set — 96 Shanghan Lun articles with round-motion interpretations, 39 formulas with full animation scripts and derivation trees, complete pulse/tongue atlas, and the 7-stage guided curriculum — is part of the commercial content pack at [3dqiflow.com](https://3dqiflow.com). The engine is designed so content packs drop into `src/data/` without code changes: the deployed demo overlays the full article/formula datasets at build time via `scripts/fetch-content-pack.mjs` (a credentialed prebuild step that is a no-op for contributors — without credentials the app builds with the sample data in this repo).
 
 ## Quick start
 

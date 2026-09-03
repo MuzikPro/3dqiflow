@@ -104,7 +104,6 @@ export const ARTICLES: Article[] = [
     difficulty: 2,
     tags: ['伤寒', '麻黄汤', '脉紧', '无汗'],
     syndrome: { meridian: '太阳', pathogen: '寒邪伤营，卫阳被遏', qiState: { affectedTrack: 'left', direction: 'stagnant', severity: 2 } },
-    huXishuComment: '此为太阳伤寒证提纲。与中风之区别在于：无汗、脉紧、身痛。中风为风伤卫（疏泄太过），伤寒为寒伤营（收敛太过）。',
     formulaAction: '麻黄升卫开表 + 桂枝温通助升 + 杏仁降肺 + 甘草和中'
   },
   {
@@ -148,7 +147,6 @@ export const ARTICLES: Article[] = [
     difficulty: 2,
     tags: ['温病', '忌汗', '相火', '乌梅白糖汤'],
     syndrome: { meridian: '太阳', pathogen: '温邪犯表，津液已伤', qiState: { affectedTrack: 'left', direction: 'reversed', severity: 2 } },
-    huXishuComment: '温病忌汗。与太阳中风、伤寒并列，三者皆属太阳病范畴但治法迥异。',
     formulaAction: '乌梅酸收相火 + 白糖养中润燥'
   },
   {

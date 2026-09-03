@@ -440,7 +440,9 @@ export function AcupointControls(props: Props) {
             </div>
           )}
           <div style={{ marginTop: '12px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.7 }}>
-            定位文本审核：{selected.locReview}；
+            {selected.loc
+              ? `定位文本审核：${selected.locReview}；`
+              : '定位文本随内容包提供（开源版示例见肺经）；'}
             {selected.derived
               ? '此穴按定位文本与骨度分寸逐条推导，仍属教学示意。'
               : '图上坐标为整经重定位的示意位（schematic_unvalidated）。'}

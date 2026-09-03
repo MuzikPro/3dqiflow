@@ -16,6 +16,15 @@
   **几何未作任何变形**，人体比例原样保留。
 - **体积**：345 KB（仅 POSITION + 索引，法线由前端 `computeVertexNormals` 计算）。
 
+## body-skin-f.glb
+
+- **来源**：同一 Human Reference Atlas 3D Reference Object Library 的
+  **女性皮肤**条目（底层数据：NLM Visible Human Female；核证记录见下文
+  VHFSkinV1.2 说明，男女两个条目同为 CC BY 4.0）。
+- **加工**：与男体同法——顶点聚类抽稀、等比缩放平移进项目坐标系，
+  几何未作变形，人体比例原样保留。
+- 应用内署名与改动声明同男体，集中在「声明」页。
+
 ## 许可：CC BY 4.0（已核实，2026-08-22）
 
 源站条目页记载：

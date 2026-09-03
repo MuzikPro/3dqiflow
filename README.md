@@ -68,4 +68,4 @@ PRs welcome — especially translations (an English rendering of round-motion te
 
 ## License
 
-Code: [MIT](LICENSE). Sample content data in `src/data/`: CC BY-NC 4.0 (attribution, non-commercial). The commercial content pack is not covered by either license.
+Code: [MIT](LICENSE). Body meshes in `public/models/`: CC BY 4.0 (attribution required — see [NOTICE.md](NOTICE.md)). Sample content data in `src/data/`: CC BY-NC 4.0 (attribution, non-commercial). The commercial content pack is not covered by any of these. Full licensing map: [NOTICE.md](NOTICE.md).

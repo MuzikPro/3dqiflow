@@ -2,7 +2,7 @@
 
 **圓運動古中醫學 3D 學習引擎 · A 3D interactive engine for visualizing the "Round Motion" (圓運動) theory of classical Chinese medicine**
 
-🌐 [3dqiflow.com](https://3dqiflow.com) · Live demo coming soon
+🌐 **Live demo: [3dqiflow.com](https://3dqiflow.com)** · mirror: [3dqiflow.vercel.app](https://3dqiflow.vercel.app)
 
 > 中气如轴，四维如轮；轴运轮行，轮运轴灵。 — 彭子益《圆运动的古中医学》
 

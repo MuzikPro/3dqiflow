@@ -2,6 +2,7 @@ import { HetuPair, LuoshuPalace } from '@/data/hetuLuoshu';
 import { ELEMENT_COLORS } from '@/data/organs';
 import { SOLAR_TERMS } from '@/data/solarTerms';
 import { getAcademicDisclaimer } from '@/utils/academicCheck';
+import { tr } from '@/i18n';
 import { UI, RADIUS } from '@/styles/theme';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
 
@@ -49,45 +50,45 @@ export function HetuLuoshuControls(props: Props) {
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           {(Object.keys(MODE_LABELS) as HetuLuoshuMode[]).map((key) => (
             <button key={key} style={toggleButtonStyle(mode === key)} onClick={() => onModeChange(key)}>
-              {MODE_LABELS[key]}
+              {tr(MODE_LABELS[key])}
             </button>
           ))}
         </div>
         {mode === 'hetu' && (
           <>
             <button style={toggleButtonStyle(axisOn)} onClick={onAxisToggle}
-                    title="五组配对叠成中轴剖面：天列在左（升），地列在右（降）；镜头回纯正面">
-              中轴剖面{axisOn ? '·开' : ''}
+                    title={tr('五组配对叠成中轴剖面：天列在左（升），地列在右（降）；镜头回纯正面')}>
+              {tr('中轴剖面')}{axisOn ? tr('·开') : ''}
             </button>
-            <div style={{ fontSize: '11px', color: UI.textMuted }}>阴阳比 · 天地层距</div>
+            <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('阴阳比 · 天地层距')}</div>
             <input
               type="range" min={0.4} max={2} step={0.05} value={layerZ}
-              aria-label="阴阳比"
+              aria-label={tr('阴阳比')}
               onChange={(e) => onLayerZChange(parseFloat(e.target.value))}
               style={{ width: '150px', accentColor: UI.accent }}
             />
             <button style={toggleButtonStyle(humanSync)} onClick={onHumanSyncToggle}>
-              人体联动
+              {tr('人体联动')}
             </button>
           </>
         )}
         {mode !== 'hetu' && (
           <>
             <div style={{ fontSize: '11px', color: UI.textMuted }}>
-              节气 · {term.name}（当令之宫最亮）
+              {tr('节气 · ')}{term.name}{tr('（当令之宫最亮）')}
             </div>
             <input
               type="range" min={0} max={SOLAR_TERMS.length - 1} value={termIndex}
-              aria-label="节气"
+              aria-label={tr('节气')}
               onChange={(e) => onTermChange(parseInt(e.target.value, 10))}
               style={{ width: '150px', accentColor: UI.accent }}
             />
           </>
         )}
         <div style={{ fontSize: '11px', color: UI.textMuted, lineHeight: 1.7 }}>
-          {mode === 'hetu' && '天(奇·阳)在后层实心，地(偶·阴)在前层线框——如脏在里、腑在表。'}
-          {mode === 'luoshu' && '戴九履一，左三右七。宫位固定，亮度随节气流转。'}
-          {mode === 'unity' && '河图为体（后·天地两数合显一体），洛书为用（前·九宫方位），同气以虚线相连。'}
+          {mode === 'hetu' && tr('天(奇·阳)在后层实心，地(偶·阴)在前层线框——如脏在里、腑在表。')}
+          {mode === 'luoshu' && tr('戴九履一，左三右七。宫位固定，亮度随节气流转。')}
+          {mode === 'unity' && tr('河图为体（后·天地两数合显一体），洛书为用（前·九宫方位），同气以虚线相连。')}
         </div>
       </div>
 
@@ -104,7 +105,7 @@ export function HetuLuoshuControls(props: Props) {
         >
           <button
             onClick={onCloseCard}
-            aria-label="关闭信息卡"
+            aria-label={tr('关闭信息卡')}
             style={{
               position: 'absolute', top: '10px', right: '10px',
               background: 'none', border: 'none', color: UI.textMuted, fontSize: '18px', cursor: 'pointer'
@@ -115,10 +116,10 @@ export function HetuLuoshuControls(props: Props) {
           {selectedPair && (
             <>
               <div style={{ fontSize: '16px', fontWeight: 'bold', color: ELEMENT_COLORS[selectedPair.element].hex }}>
-                {selectedPair.label} · 天{selectedPair.heavenNumber} 地{selectedPair.earthNumber}
+                {selectedPair.label}{tr(' · 天')}{selectedPair.heavenNumber}{tr(' 地')}{selectedPair.earthNumber}
               </div>
               <div style={{ fontSize: '12px', color: UI.textMuted, margin: '6px 0 10px' }}>
-                {selectedPair.direction}方 · {selectedPair.nature} · {selectedPair.organs}
+                {selectedPair.direction}{tr('方 · ')}{selectedPair.nature} · {selectedPair.organs}
               </div>
               <div style={{ fontSize: '12px', lineHeight: 1.9, color: UI.textPrimary }}>{selectedPair.meaning}</div>
             </>
@@ -127,19 +128,19 @@ export function HetuLuoshuControls(props: Props) {
             <>
               <div style={{ fontSize: '16px', fontWeight: 'bold', color: ELEMENT_COLORS[selectedPalace.element].hex }}>
                 {selectedPalace.guaSymbol} {selectedPalace.gua}
-                {selectedPalace.number} 宫
+                {selectedPalace.number}{tr(' 宫')}
               </div>
               <div style={{ fontSize: '12px', color: UI.textMuted, margin: '6px 0 10px' }}>
                 {selectedPalace.bodyPart} · {selectedPalace.organRole}
               </div>
               <div style={{ fontSize: '12px', lineHeight: 1.9, color: UI.textPrimary }}>
-                洛书九宫是圆运动的空间定位系统：此宫居{selectedPalace.bodyPart}，主
-                {selectedPalace.organRole}。拖动节气滑块可见"当令之宫最亮"的时空流转。
+                {tr('洛书九宫是圆运动的空间定位系统：此宫居')}{selectedPalace.bodyPart}{tr('，主')}
+                {selectedPalace.organRole}{tr('。拖动节气滑块可见"当令之宫最亮"的时空流转。')}
               </div>
             </>
           )}
           <div style={{ marginTop: '12px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.6 }}>
-            河图洛书与人体的对应是教学模型。{getAcademicDisclaimer()}·仅供学习，非医疗建议
+            {tr('河图洛书与人体的对应是教学模型。')}{tr(getAcademicDisclaimer())}{tr('·仅供学习，非医疗建议')}
           </div>
         </div>
       )}

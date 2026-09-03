@@ -5,6 +5,7 @@ import { QiState } from '@/data/articles';
 import { ORGANS, Organ } from '@/data/organs';
 import { BACKGROUND, THREE_DEFAULTS, UI, RADIUS, COLORS } from '@/styles/theme';
 import { panelStyle } from '../UI/panelStyle';
+import { tr } from '@/i18n';
 import { QiLoop, buildHalfCurve } from '../AxisWheel/QiLoop';
 import { AxisVortex } from '../AxisWheel/AxisVortex';
 import { OrganMesh } from '../AxisWheel/OrganMesh';
@@ -49,7 +50,7 @@ export function qiStatePhrase(state: QiState | null): string | null {
   const dir = {
     stagnant: '受阻', reversed: '逆乱', ascend: '升发欲解', descend: '降复欲解'
   }[state.direction];
-  return `${track}${dir} · ${state.severity}/3`;
+  return `${tr(track)}${tr(dir)} · ${state.severity}/3`;
 }
 
 function Lerper({ motion, state }: { motion: QiMotion; state: QiState | null }) {
@@ -226,7 +227,7 @@ export function QiStagePanel({ state, label, ministerBroken = false, heatCold = 
           fontSize: '11px', color: UI.textMuted, pointerEvents: 'none'
         }}
       >
-        {label ? `${label} · 圆运动实时病机` : '圆运动实时病机'}
+        {label ? `${label} · ${tr('圆运动实时病机')}` : tr('圆运动实时病机')}
       </div>
       {/* 台上的话：这一条病在哪、多重——3D 不再哑巴 */}
       {(phrase || ministerBroken || heatCold) && (
@@ -238,8 +239,8 @@ export function QiStagePanel({ state, label, ministerBroken = false, heatCold = 
           }}
         >
           {phrase && <span style={{ color: UI.accent, fontWeight: 'bold' }}>{phrase}</span>}
-          {ministerBroken && <span style={{ color: COLORS.fire.primary, marginLeft: '8px' }}>命门根本受损</span>}
-          {heatCold && <span style={{ color: COLORS.water.primary, marginLeft: '8px' }}>上热下寒</span>}
+          {ministerBroken && <span style={{ color: COLORS.fire.primary, marginLeft: '8px' }}>{tr('命门根本受损')}</span>}
+          {heatCold && <span style={{ color: COLORS.water.primary, marginLeft: '8px' }}>{tr('上热下寒')}</span>}
         </div>
       )}
     </div>

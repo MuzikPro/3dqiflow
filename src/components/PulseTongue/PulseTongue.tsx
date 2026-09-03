@@ -9,6 +9,7 @@ import { getFormulaByName } from '@/data/formulas';
 import { BACKGROUND, THREE_DEFAULTS, UI, RADIUS, COLORS } from '@/styles/theme';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
 import { getAcademicDisclaimer } from '@/utils/academicCheck';
+import { tr } from '@/i18n';
 import { BodyFigure } from '../MeridianTheater/BodyFigure';
 import { BodyMesh } from '../MeridianTheater/BodyMesh';
 import { PulseWaves } from './PulseWaves';
@@ -87,13 +88,13 @@ function InfoBody({
     <>
       {characteristics && (
         <>
-          <SectionTitle text="特征" />
+          <SectionTitle text={tr('特征')} />
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px' }}>
             <tbody>
               {Object.entries(characteristics).map(([key, val]) => (
                 <tr key={key}>
                   <td style={{ color: UI.textMuted, padding: '2px 6px 2px 0', width: '38px', verticalAlign: 'top' }}>
-                    {labels[key] ?? key}
+                    {tr(labels[key] ?? key)}
                   </td>
                   <td style={{ color: UI.textPrimary, padding: '2px 0' }}>{val}</td>
                 </tr>
@@ -104,7 +105,7 @@ function InfoBody({
       )}
       {interpretation && (
         <>
-          <SectionTitle text="圆运动解读" />
+          <SectionTitle text={tr('圆运动解读')} />
           <div
             style={{
               fontSize: '12px', color: UI.textPrimary, lineHeight: 1.8,
@@ -118,7 +119,7 @@ function InfoBody({
       )}
       {analogy && (
         <>
-          <SectionTitle text="比喻" />
+          <SectionTitle text={tr('比喻')} />
           <div style={{ fontSize: '11px', color: UI.textSecondary, fontStyle: 'italic', lineHeight: 1.7 }}>
             💡 {analogy}
           </div>
@@ -126,11 +127,11 @@ function InfoBody({
       )}
       {diffs && diffs.length > 0 && (
         <>
-          <SectionTitle text="鉴别要点" />
+          <SectionTitle text={tr('鉴别要点')} />
           <div style={{ fontSize: '11px', color: UI.textPrimary, lineHeight: 1.7 }}>
             {diffs.map((d) => (
               <div key={d.vs}>
-                <span style={{ color: COLORS.earth.primary }}>vs {d.vs}：</span>
+                <span style={{ color: COLORS.earth.primary }}>vs {d.vs}{tr('：')}</span>
                 {d.diff}
               </div>
             ))}
@@ -139,7 +140,7 @@ function InfoBody({
       )}
       {citedArticles.length > 0 && (
         <>
-          <SectionTitle text="关联条文" />
+          <SectionTitle text={tr('关联条文')} />
           <div>
             {citedArticles.map((a) => (
               <Chip key={a.id} text={articleLabel(a)} color={COLORS.water.primary} onClick={() => onOpenArticle(a.id)} />
@@ -149,7 +150,7 @@ function InfoBody({
       )}
       {formulaNames && formulaNames.length > 0 && (
         <>
-          <SectionTitle text="关联方剂" />
+          <SectionTitle text={tr('关联方剂')} />
           <div>
             {formulaNames.map((name) => (
               <Chip
@@ -164,7 +165,7 @@ function InfoBody({
       )}
       {studyPoints && studyPoints.length > 0 && (
         <>
-          <SectionTitle text="学习要点" />
+          <SectionTitle text={tr('学习要点')} />
           <ul style={{ fontSize: '11px', color: UI.textPrimary, lineHeight: 1.8, paddingLeft: '16px', margin: 0 }}>
             {studyPoints.map((sp) => (
               <li key={sp}>{sp}</li>
@@ -281,12 +282,12 @@ export function PulseTongue({ onOpenFormula, onOpenArticle, initialPulse, initia
         }}
       >
         <div style={{ display: 'flex', gap: '6px' }}>
-          <button style={toggleButtonStyle(tab === 'pulse')} onClick={() => setTab('pulse')}>脉法</button>
-          <button style={toggleButtonStyle(tab === 'tongue')} onClick={() => setTab('tongue')}>舌象</button>
+          <button style={toggleButtonStyle(tab === 'pulse')} onClick={() => setTab('pulse')}>{tr('脉法')}</button>
+          <button style={toggleButtonStyle(tab === 'tongue')} onClick={() => setTab('tongue')}>{tr('舌象')}</button>
         </div>
         {tab === 'pulse' ? (
           <>
-            <div style={{ fontSize: '11px', color: UI.textMuted }}>脉象（位·数·形·势）</div>
+            <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('脉象（位·数·形·势）')}</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {PULSES.map((p) => (
                 <button key={p.name} style={toggleButtonStyle(pulse.name === p.name)} onClick={() => pickPulse(p)}>
@@ -295,12 +296,12 @@ export function PulseTongue({ onOpenFormula, onOpenArticle, initialPulse, initia
               ))}
             </div>
             <button style={toggleButtonStyle(compare)} onClick={() => setCompare((v) => !v)}>
-              对比（左平右病）
+              {tr('对比（左平右病）')}
             </button>
           </>
         ) : (
           <>
-            <div style={{ fontSize: '11px', color: UI.textMuted }}>舌象（舌质+苔型）</div>
+            <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('舌象（舌质+苔型）')}</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {TONGUE_COATINGS.map((c) => (
                 <button key={c.name} style={toggleButtonStyle(coating.name === c.name)} onClick={() => pickCoating(c)}>
@@ -308,22 +309,22 @@ export function PulseTongue({ onOpenFormula, onOpenArticle, initialPulse, initia
                 </button>
               ))}
             </div>
-            <div style={{ fontSize: '11px', color: UI.textMuted }}>视角</div>
+            <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('视角')}</div>
             <div style={{ display: 'flex', gap: '6px' }}>
               {(['front', 'side', 'under'] as TongueView[]).map((view) => (
                 <button key={view} style={toggleButtonStyle(tongueView === view)} onClick={() => setTongueView(view)}>
-                  {view === 'front' ? '正面' : view === 'side' ? '侧面' : '舌底'}
+                  {view === 'front' ? tr('正面') : view === 'side' ? tr('侧面') : tr('舌底')}
                 </button>
               ))}
             </div>
             <button style={toggleButtonStyle(showRegions)} onClick={() => setShowRegions((v) => !v)}>
-              五行分区光环
+              {tr('五行分区光环')}
             </button>
           </>
         )}
 
         {/* 六经脉舌联合诊断矩阵（v3） */}
-        <div style={{ fontSize: '11px', color: UI.textMuted, marginTop: '4px' }}>六经脉舌联合诊断</div>
+        <div style={{ fontSize: '11px', color: UI.textMuted, marginTop: '4px' }}>{tr('六经脉舌联合诊断')}</div>
         <div>
           {COMBINED_DIAGNOSIS.map((entry) => (
             <button
@@ -368,13 +369,13 @@ export function PulseTongue({ onOpenFormula, onOpenArticle, initialPulse, initia
               color: UI.textPrimary, lineHeight: 1.8
             }}
           >
-            <div style={{ color: UI.accent, fontWeight: 'bold' }}>{combined.syndrome} · 四联对应</div>
-            脉：{combined.pulseLabel} · 舌：{combined.tongueLabel}
+            <div style={{ color: UI.accent, fontWeight: 'bold' }}>{combined.syndrome}{tr(' · 四联对应')}</div>
+            {tr('脉：')}{combined.pulseLabel}{tr(' · 舌：')}{combined.tongueLabel}
             <br />
             {combined.yuanYundong}
             <div style={{ marginTop: '4px' }}>
               <Chip
-                text={`代表方 ${combined.formula}`}
+                text={`${tr('代表方')} ${combined.formula}`}
                 color={UI.accent}
                 onClick={getFormulaByName(combined.formula) ? () => onOpenFormula(combined.formula) : undefined}
               />
@@ -408,7 +409,7 @@ export function PulseTongue({ onOpenFormula, onOpenArticle, initialPulse, initia
             />
             {compare && (
               <div style={{ fontSize: '11px', color: UI.textMuted, marginTop: '8px' }}>
-                对比模式：左轨=平脉（参照），右轨={pulse.name}。
+                {tr('对比模式：左轨=平脉（参照），右轨=')}{pulse.name}{tr('。')}
               </div>
             )}
           </>
@@ -434,13 +435,13 @@ export function PulseTongue({ onOpenFormula, onOpenArticle, initialPulse, initia
               onOpenFormula={onOpenFormula}
             />
             <div style={{ fontSize: '11px', color: UI.textSecondary, lineHeight: 1.8, marginTop: '8px' }}>
-              舌面分区：舌尖=心火，舌中=脾胃（中轴），舌根=肾水，舌边=肝胆。
+              {tr('舌面分区：舌尖=心火，舌中=脾胃（中轴），舌根=肾水，舌边=肝胆。')}
             </div>
           </>
         )}
         <div style={{ marginTop: '10px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.6 }}>
-          脉舌与圆运动的对应是教学示意，非诊断工具；解读属学习笔记，未经专家审核。
-          {getAcademicDisclaimer()}·仅供学习，非医疗建议
+          {tr('脉舌与圆运动的对应是教学示意，非诊断工具；解读属学习笔记，未经专家审核。')}
+          {tr(getAcademicDisclaimer())}{tr('·仅供学习，非医疗建议')}
         </div>
       </div>
     </div>

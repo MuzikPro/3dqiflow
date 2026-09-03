@@ -5,6 +5,7 @@ import { getPengQuote } from '@/data/learningPath';
 import { getAcademicDisclaimer, annotateFormula } from '@/utils/academicCheck';
 import { UI, RADIUS, COLORS } from '@/styles/theme';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
+import { tr } from '@/i18n';
 
 interface Props {
   formula: Formula;
@@ -98,11 +99,11 @@ function FragmentRow({ d }: { d: FormulaDrug }) {
           <span style={{
             fontSize: '10px', color: ROLE_COLORS[d.role], border: `1px solid ${ROLE_COLORS[d.role]}`,
             borderRadius: '8px', padding: '0 6px', whiteSpace: 'nowrap'
-          }}>{d.role}</span>
+          }}>{tr(d.role)}</span>
         )}
       </span>
       <span style={{ fontSize: '12px', color: UI.textPrimary, whiteSpace: 'nowrap' }}>{d.dose}</span>
-      <span style={{ fontSize: '11px', color: UI.textMuted }}>归经 {d.meridian}</span>
+      <span style={{ fontSize: '11px', color: UI.textMuted }}>{tr('归经')} {d.meridian}</span>
       <span className="drug-action" style={{ fontSize: '11px', color: UI.textSecondary, lineHeight: 1.6 }}>
         {d.action}
       </span>
@@ -132,7 +133,7 @@ export function FormulaControls(props: Props) {
           maxHeight: '78vh', overflowY: 'auto'
         }}
       >
-        <div style={{ fontSize: '11px', color: UI.textMuted, marginBottom: '8px' }}>经方三路 · 选方</div>
+        <div style={{ fontSize: '11px', color: UI.textMuted, marginBottom: '8px' }}>{tr('经方三路 · 选方')}</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
           {FORMULAS.map((f) => (
             <button key={f.name} style={toggleButtonStyle(f.name === formula.name)} onClick={() => onPickFormula(f)}>
@@ -161,14 +162,14 @@ export function FormulaControls(props: Props) {
         </div>
         {/* ④ 圆运动定位标签组（数据驱动：category + keyConcept） */}
         <div style={{ margin: '8px 0 4px' }}>
-          <Tag text={CATEGORY_CHIP[formula.category].label} color={CATEGORY_CHIP[formula.category].color} />
+          <Tag text={tr(CATEGORY_CHIP[formula.category].label)} color={CATEGORY_CHIP[formula.category].color} />
           {formula.keyConcept &&
             formula.keyConcept.split('·').slice(0, 3).map((part) => (
               <Tag key={part} text={part} color={UI.textMuted} />
             ))}
         </div>
 
-        <SectionTitle text="药物组成 · 君臣佐使" />
+        <SectionTitle text={tr('药物组成 · 君臣佐使')} />
         <div className="drug-grid">
           {sortedDrugs(formula).map((d) => (
             <FragmentRow key={d.name} d={d} />
@@ -177,21 +178,21 @@ export function FormulaControls(props: Props) {
 
         {formula.parentFormula && (
           <>
-            <SectionTitle text="化裁 · 来源路径" />
+            <SectionTitle text={tr('化裁 · 来源路径')} />
             <div style={{ fontSize: '11px', color: UI.textPrimary, lineHeight: 1.7 }}>
               <span style={{ color: UI.accent }}>{lineagePath(formula).join(' → ')}</span>
-              {formula.removedHerbs?.length ? ` · 去 ${formula.removedHerbs.join('、')}` : ''}
+              {formula.removedHerbs?.length ? ` · ${tr('去')} ${formula.removedHerbs.join('、')}` : ''}
               {formula.modifiedHerbs?.length
                 ? ' · ' + formula.modifiedHerbs.map((m) => `${m.name} ${m.from}→${m.to}`).join('、')
                 : ''}
-              {formula.addedHerbs?.length ? ` · 加 ${formula.addedHerbs.join('、')}` : ''}
+              {formula.addedHerbs?.length ? ` · ${tr('加')} ${formula.addedHerbs.join('、')}` : ''}
               {formula.bridgeNote && (
                 <div style={{ color: COLORS.fire.primary, marginTop: '3px' }}>⇄ {formula.bridgeNote}</div>
               )}
             </div>
           </>
         )}
-        <SectionTitle text="适用证型" />
+        <SectionTitle text={tr('适用证型')} />
         <div>
           {formula.applicableSyndromes.map((sy) => (
             <Tag key={sy} text={sy} color={COLORS.wood.primary} />
@@ -200,7 +201,7 @@ export function FormulaControls(props: Props) {
 
         {formula.contraindications && (
           <>
-            <SectionTitle text="禁忌" />
+            <SectionTitle text={tr('禁忌')} />
             <div>
               {formula.contraindications.map((c) => (
                 <Tag key={c} text={c} color={COLORS.fire.primary} />
@@ -211,7 +212,7 @@ export function FormulaControls(props: Props) {
 
         {formula.keyDifferentiation && (
           <>
-            <SectionTitle text="鉴别要点" />
+            <SectionTitle text={tr('鉴别要点')} />
             <div style={{ fontSize: '11px', color: UI.textPrimary, lineHeight: 1.7 }}>
               {formula.keyDifferentiation}
             </div>
@@ -220,7 +221,7 @@ export function FormulaControls(props: Props) {
 
         {formula.formulaStructure && (
           <>
-            <SectionTitle text="圆运动方义" />
+            <SectionTitle text={tr('圆运动方义')} />
             <div style={{ fontSize: '11px', color: UI.textPrimary, lineHeight: 1.7 }}>
               {formula.formulaStructure}
               {formula.keyConcept && (
@@ -232,7 +233,7 @@ export function FormulaControls(props: Props) {
 
         {formula.modernAnalogy && (
           <>
-            <SectionTitle text="比喻" />
+            <SectionTitle text={tr('比喻')} />
             <div
               style={{
                 fontSize: '11px', color: UI.textSecondary, lineHeight: 1.7,
@@ -246,7 +247,7 @@ export function FormulaControls(props: Props) {
 
         {formula.specialNotes && (
           <>
-            <SectionTitle text="服法要点" />
+            <SectionTitle text={tr('服法要点')} />
             <ul style={{ fontSize: '11px', color: UI.textPrimary, lineHeight: 1.8, paddingLeft: '16px', margin: 0 }}>
               {formula.specialNotes.map((n) => (
                 <li key={n}>{n}</li>
@@ -257,7 +258,7 @@ export function FormulaControls(props: Props) {
 
         {formula.doseComparison && (
           <>
-            <SectionTitle text="剂量对比" />
+            <SectionTitle text={tr('剂量对比')} />
             <div
               style={{
                 fontSize: '11px', color: UI.textPrimary, lineHeight: 1.7,
@@ -271,7 +272,7 @@ export function FormulaControls(props: Props) {
 
         {formula.relatedFormulaNames && (
           <>
-            <SectionTitle text="相关方剂" />
+            <SectionTitle text={tr('相关方剂')} />
             <div>
               {formula.relatedFormulaNames.map((rel) => {
                 const base = rel.split('（')[0].trim();
@@ -291,7 +292,7 @@ export function FormulaControls(props: Props) {
 
         {citingArticles.length > 0 && (
           <>
-            <SectionTitle text={`相关条文（${citingArticles.length}）`} />
+            <SectionTitle text={`${tr('相关条文')}（${citingArticles.length}）`} />
             <div>
               {citingArticles.map((a) => (
                 <Tag
@@ -315,7 +316,7 @@ export function FormulaControls(props: Props) {
                   </div>
                   <div style={{ fontSize: '13px', color: UI.textPrimary, lineHeight: 1.8 }}>{cite.originalText}</div>
                   <div style={{ fontSize: '11px', color: UI.textSecondary, lineHeight: 1.7, marginTop: '4px' }}>
-                    白话：{cite.modernText}
+                    {tr('白话：')}{cite.modernText}
                   </div>
                   {onOpenArticle && (
                     <button
@@ -326,7 +327,7 @@ export function FormulaControls(props: Props) {
                         cursor: 'pointer', fontSize: '12px'
                       }}
                     >
-                      去条文阅读读全条 →
+                      {tr('去条文阅读读全条')} →
                     </button>
                   )}
                 </div>
@@ -342,7 +343,7 @@ export function FormulaControls(props: Props) {
         )}
         {quote && (
           <>
-            <SectionTitle text="彭子益点睛" />
+            <SectionTitle text={tr('彭子益点睛')} />
             <div style={{
               borderLeft: `3px solid ${UI.accent}`, paddingLeft: '12px',
               margin: '2px 0 4px'
@@ -350,7 +351,7 @@ export function FormulaControls(props: Props) {
               <div style={{ fontSize: '13px', color: UI.accent, lineHeight: 1.8 }}>“{quote.text}”</div>
               {quote.modern && (
                 <div style={{ fontSize: '11px', color: UI.textSecondary, lineHeight: 1.7, marginTop: '4px' }}>
-                  白话：{quote.modern}
+                  {tr('白话：')}{quote.modern}
                 </div>
               )}
               <div style={{ fontSize: '10px', color: UI.textFaint, marginTop: '4px' }}>{quote.source}</div>
@@ -359,7 +360,7 @@ export function FormulaControls(props: Props) {
         )}
         <div style={{ fontSize: '10px', color: UI.textFaint, marginTop: '8px' }}>{annotateFormula(formula.name)}</div>
         <div style={{ fontSize: '10px', color: UI.textFaint, lineHeight: 1.6, marginTop: '6px' }}>
-          {getAcademicDisclaimer()}·仅供学习，非医疗建议
+          {getAcademicDisclaimer()}·{tr('仅供学习，非医疗建议')}
         </div>
       </div>}
 

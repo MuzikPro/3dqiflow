@@ -11,6 +11,7 @@ import {
   getPengQuote
 } from '@/data/learningPath';
 import { BACKGROUND, UI, RADIUS, COLORS } from '@/styles/theme';
+import { tr, getLang } from '@/i18n';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
 import { getAcademicDisclaimer } from '@/utils/academicCheck';
 import { ArticleList } from './ArticleList';
@@ -189,8 +190,8 @@ export function ArticleReader({
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="搜索：条文/方剂/关键词"
-              aria-label="搜索条文"
+              placeholder={tr('搜索：条文/方剂/关键词')}
+              aria-label={tr('搜索条文')}
               style={{
                 background: 'transparent',
                 border: `1px solid ${UI.panelBorder}`,
@@ -203,7 +204,7 @@ export function ArticleReader({
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
               {MERIDIAN_FILTERS.map((m) => (
                 <button key={m} style={toggleButtonStyle(meridianFilter === m)} onClick={() => setMeridianFilter(m)}>
-                  {m}
+                  {tr(m)}
                 </button>
               ))}
             </div>
@@ -220,7 +221,7 @@ export function ArticleReader({
           position: 'fixed', left: '8px', bottom: '62px', zIndex: 141
         }}
       >
-        {listOpen ? '× 收起目录' : '☰ 目录'}
+        {listOpen ? tr('× 收起目录') : tr('☰ 目录')}
       </button>
 
       {/* 中栏：条文滚动流 */}
@@ -265,12 +266,17 @@ export function ArticleReader({
       >
         <div style={{ display: 'flex', gap: '6px' }}>
           <button style={toggleButtonStyle(mode === 'full')} onClick={() => setMode('full')}>
-            对照模式
+            {tr('对照模式')}
           </button>
           <button style={toggleButtonStyle(mode === 'plain')} onClick={() => setMode('plain')}>
-            原文模式
+            {tr('原文模式')}
           </button>
         </div>
+        {getLang() === 'en' && (
+          <div style={{ fontSize: '10px', color: UI.textFaint, lineHeight: 1.5 }}>
+            Classical texts are shown in the original Chinese — no machine translations. UI only is translated.
+          </div>
+        )}
         <QiStagePanel
           state={active.syndrome?.qiState ?? null}
           label={articleLabel(active)}
@@ -279,17 +285,17 @@ export function ArticleReader({
         />
         <div style={{ ...panelStyle, borderRadius: RADIUS.md, padding: '14px 18px', overflowY: 'auto', flex: 1 }}>
           <div style={{ fontSize: '14px', fontWeight: 'bold', color: UI.accent }}>
-            {articleLabel(active)} · 条文信息卡
+            {articleLabel(active)} · {tr('条文信息卡')}
           </div>
           {active.syndrome ? (
             <div style={{ fontSize: '12px', color: UI.textPrimary, lineHeight: 2, marginTop: '8px' }}>
-              <strong style={{ color: UI.accent }}>所属经：</strong>
-              {active.syndrome.meridian}病
+              <strong style={{ color: UI.accent }}>{tr('所属经：')}</strong>
+              {active.syndrome.meridian}{tr('病')}
               <br />
-              <strong style={{ color: UI.accent }}>病机：</strong>
+              <strong style={{ color: UI.accent }}>{tr('病机：')}</strong>
               {active.syndrome.pathogen}
               <br />
-              <strong style={{ color: UI.accent }}>圆运动状态：</strong>
+              <strong style={{ color: UI.accent }}>{tr('圆运动状态：')}</strong>
               <span
                 style={{
                   color: statusColor(active.syndrome.qiState.direction),
@@ -299,23 +305,23 @@ export function ArticleReader({
                   fontSize: '11px'
                 }}
               >
-                {trackText(active.syndrome.qiState.affectedTrack)}
-                {directionText(active.syndrome.qiState.direction)} · {active.syndrome.qiState.severity}/3
+                {tr(trackText(active.syndrome.qiState.affectedTrack))}
+                {tr(directionText(active.syndrome.qiState.direction))} · {active.syndrome.qiState.severity}/3
               </span>
               <br />
-              <strong style={{ color: UI.accent }}>对应方剂：</strong>
-              {active.relatedFormulas.length > 0 ? active.relatedFormulas.join('、') : '本条无方（辨证/预后条文）'}
+              <strong style={{ color: UI.accent }}>{tr('对应方剂：')}</strong>
+              {active.relatedFormulas.length > 0 ? active.relatedFormulas.join('、') : tr('本条无方（辨证/预后条文）')}
               {active.formulaAction && (
                 <>
                   <br />
-                  <strong style={{ color: UI.accent }}>方剂作用：</strong>
+                  <strong style={{ color: UI.accent }}>{tr('方剂作用：')}</strong>
                   {active.formulaAction}
                 </>
               )}
               {active.pulseTongue && (
                 <>
                   <br />
-                  <strong style={{ color: UI.accent }}>脉舌：</strong>
+                  <strong style={{ color: UI.accent }}>{tr('脉舌：')}</strong>
                   {onOpenPulseTongue ? (
                     <button
                       onClick={() => onOpenPulseTongue(active.pulseTongue!.pulse, active.pulseTongue!.tongue)}
@@ -334,7 +340,7 @@ export function ArticleReader({
               )}
             </div>
           ) : (
-            <div style={{ fontSize: '12px', color: UI.textMuted, marginTop: '8px' }}>本条暂无病机标注。</div>
+            <div style={{ fontSize: '12px', color: UI.textMuted, marginTop: '8px' }}>{tr('本条暂无病机标注。')}</div>
           )}
           {/* 彭子益点睛（DELIVERY_ABC · B，仅交付逐字条目） */}
           {getPengQuote(`article_${active.id}`) && (
@@ -344,18 +350,18 @@ export function ArticleReader({
                 border: `1px solid ${UI.accent}`, fontSize: '12px', lineHeight: 1.7
               }}
             >
-              <span style={{ color: UI.accent, fontWeight: 'bold' }}>💡 彭子益点睛：</span>
+              <span style={{ color: UI.accent, fontWeight: 'bold' }}>💡 {tr('彭子益点睛：')}</span>
               <span style={{ color: UI.accent }}>“{getPengQuote(`article_${active.id}`)!.text}”</span>
               {getPengQuote(`article_${active.id}`)!.modern && (
                 <div style={{ color: UI.textSecondary, fontSize: '11px', marginTop: '3px' }}>
-                  白话：{getPengQuote(`article_${active.id}`)!.modern}
+                  {tr('白话：')}{getPengQuote(`article_${active.id}`)!.modern}
                 </div>
               )}
             </div>
           )}
           <div style={{ marginTop: '10px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.6 }}>
-            病机标注提炼自本条圆运动解读，属学习笔记，未经专家审核。
-            {getAcademicDisclaimer()}·仅供学习，非医疗建议
+            {tr('病机标注提炼自本条圆运动解读，属学习笔记，未经专家审核。')}
+            {getAcademicDisclaimer()}{tr('·仅供学习，非医疗建议')}
           </div>
         </div>
       </div>
@@ -371,7 +377,7 @@ export function ArticleReader({
         }}
       >
         <span style={{ fontSize: '11px', color: UI.textMuted, whiteSpace: 'nowrap' }}>
-          已读 {readIds.size}/{ARTICLES.length}
+          {tr('已读')} {readIds.size}/{ARTICLES.length}
         </span>
         <div style={{ flex: 1, height: '6px', borderRadius: '3px', background: UI.panelBorder }}>
           <div
@@ -392,7 +398,7 @@ export function ArticleReader({
             return (
               <button
                 key={meta.stage}
-                title={`第${meta.stage}阶 ${meta.name} · ${meta.subtitle} · ${p.read}/${p.total}`}
+                title={`${tr('第')}${meta.stage}${tr('阶')} ${meta.name} · ${meta.subtitle} · ${p.read}/${p.total}`}
                 onClick={() => {
                   const first = stageArticles(meta.stage)[0];
                   if (first) jumpToArticle(first.id);
@@ -427,7 +433,7 @@ export function ArticleReader({
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ fontSize: '17px', color: LEARNING_STAGES[celebration - 1].color, fontWeight: 'bold' }}>
-              🎉 第{celebration}阶「{LEARNING_STAGES[celebration - 1].name}」通关！
+              🎉 {tr('第')}{celebration}{tr('阶')}「{LEARNING_STAGES[celebration - 1].name}」{tr('通关！')}
             </div>
             <div style={{ fontSize: '13px', color: UI.textPrimary, lineHeight: 1.9, marginTop: '10px' }}>
               {LEARNING_STAGES[celebration - 1].unlockQuote}
@@ -456,7 +462,7 @@ export function ArticleReader({
                     borderRadius: RADIUS.pill, padding: '5px 16px', cursor: 'pointer', fontSize: '13px'
                   }}
                 >
-                  进入第{celebration + 1}阶 →
+                  {tr('进入第')}{celebration + 1}{tr('阶')} →
                 </button>
               )}
               <button
@@ -466,7 +472,7 @@ export function ArticleReader({
                   borderRadius: RADIUS.pill, padding: '5px 14px', cursor: 'pointer', fontSize: '13px'
                 }}
               >
-                继续当前阅读
+                {tr('继续当前阅读')}
               </button>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import { Article, articleLabel } from '@/data/articles';
 import { UI, RADIUS } from '@/styles/theme';
+import { tr } from '@/i18n';
 import { panelStyle } from '../UI/panelStyle';
 
 interface Props {
@@ -43,7 +44,7 @@ export function ArticleList({ articles, selectedId, onSelect, header, className 
     >
       {header}
       {GROUPS.length === 0 && (
-        <div style={{ fontSize: '12px', color: UI.textMuted, padding: '8px' }}>无匹配条文</div>
+        <div style={{ fontSize: '12px', color: UI.textMuted, padding: '8px' }}>{tr('无匹配条文')}</div>
       )}
       {GROUPS.map((group) => (
         <div key={group.chapter} style={{ marginBottom: '12px' }}>

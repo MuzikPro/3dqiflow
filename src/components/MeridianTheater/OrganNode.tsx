@@ -4,6 +4,7 @@ import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { Organ } from '@/data/organs';
 import { UI } from '@/styles/theme';
+import { tr } from '@/i18n';
 import { Vec3 } from './flowGeometry';
 
 interface Props {
@@ -71,7 +72,7 @@ export function OrganNode({ organ, position, active, onSelect }: Props) {
             textShadow: '0 0 6px rgba(0,0,0,0.9)'
           }}
         >
-          {organ.name}
+          {tr(organ.name)}
         </div>
       </Html>
     </group>

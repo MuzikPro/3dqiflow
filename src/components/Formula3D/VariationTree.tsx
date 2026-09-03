@@ -4,6 +4,7 @@ import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { FORMULAS, Formula } from '@/data/formulas';
 import { COLORS, UI } from '@/styles/theme';
+import { tr } from '@/i18n';
 
 /**
  * 方剂化裁树（DELIVERY_FORMULA_TREE_FIX：数据驱动，两棵独立树）。
@@ -166,10 +167,10 @@ export function VariationTree({ rootName }: Props) {
                 <div style={{ textAlign: 'center', textShadow: '0 0 6px rgba(0,0,0,0.9)', lineHeight: 1.3 }}>
                   <div style={{ color: node.color, fontSize: node.isRoot ? '14px' : '11px', whiteSpace: 'nowrap' }}>
                     {node.formula.name}
-                    {bridge && <span style={{ color: COLORS.fire.primary }}> ⇄桥梁</span>}
+                    {bridge && <span style={{ color: COLORS.fire.primary }}> ⇄{tr('桥梁')}</span>}
                   </div>
                   {!node.isRoot && (
-                    <div style={{ color: UI.textMuted, fontSize: '9px', whiteSpace: 'nowrap' }}>{node.label}</div>
+                    <div style={{ color: UI.textMuted, fontSize: '9px', whiteSpace: 'nowrap' }}>{tr(node.label)}</div>
                   )}
                 </div>
               </Html>
@@ -194,16 +195,16 @@ export function VariationTree({ rootName }: Props) {
                 <span style={{ color: UI.textMuted }}> ⇄ </span>
                 <strong style={{ color: selected.color }}>{selected.formula.name}</strong>
                 {diff.onlyA.length > 0 && (
-                  <div><span style={{ color: COLORS.metal.secondary }}>仅前方有：</span>{diff.onlyA.join('、')}</div>
+                  <div><span style={{ color: COLORS.metal.secondary }}>{tr('仅前方有：')}</span>{diff.onlyA.join('、')}</div>
                 )}
                 {diff.onlyB.length > 0 && (
-                  <div><span style={{ color: COLORS.wood.primary }}>仅后方有：</span>{diff.onlyB.join('、')}</div>
+                  <div><span style={{ color: COLORS.wood.primary }}>{tr('仅后方有：')}</span>{diff.onlyB.join('、')}</div>
                 )}
                 {diff.doseDiff.length > 0 && (
-                  <div><span style={{ color: COLORS.minister.primary }}>剂量变化：</span>{diff.doseDiff.join('、')}</div>
+                  <div><span style={{ color: COLORS.minister.primary }}>{tr('剂量变化：')}</span>{diff.doseDiff.join('、')}</div>
                 )}
                 {diff.onlyA.length + diff.onlyB.length + diff.doseDiff.length === 0 && (
-                  <div style={{ color: UI.textMuted }}>两方药物组成相同。</div>
+                  <div style={{ color: UI.textMuted }}>{tr('两方药物组成相同。')}</div>
                 )}
                 <button
                   onClick={() => setCompareBase(null)}
@@ -212,7 +213,7 @@ export function VariationTree({ rootName }: Props) {
                     color: UI.textMuted, borderRadius: '10px', padding: '1px 10px', cursor: 'pointer', fontSize: '11px'
                   }}
                 >
-                  退出对比
+                  {tr('退出对比')}
                 </button>
               </div>
             );
@@ -235,7 +236,7 @@ export function VariationTree({ rootName }: Props) {
             }}
           >
             <strong style={{ color: selected.color }}>{selected.formula.name}</strong>
-            {!selected.isRoot && <span style={{ color: UI.textMuted }}>（{selected.label}）</span>}
+            {!selected.isRoot && <span style={{ color: UI.textMuted }}>（{tr(selected.label)}）</span>}
             <div>{selected.formula.keyConcept ?? selected.formula.categoryLabel}</div>
             {selected.formula.bridgeNote && (
               <div style={{ color: COLORS.fire.primary, fontSize: '11px', marginTop: '4px' }}>
@@ -251,7 +252,7 @@ export function VariationTree({ rootName }: Props) {
                 borderRadius: '10px', padding: '2px 10px', cursor: 'pointer', fontSize: '12px'
               }}
             >
-              ⇄ 设为对比基准（再点另一节点）
+              ⇄ {tr('设为对比基准（再点另一节点）')}
             </button>
           </div>
         </Html>

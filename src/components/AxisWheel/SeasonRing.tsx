@@ -1,6 +1,7 @@
 import { Html } from '@react-three/drei';
 import { SOLAR_TERMS, getSeasonPosition } from '@/data/solarTerms';
 import { SCENE_TEXT } from '@/styles/theme';
+import { tr } from '@/i18n';
 
 interface Props {
   /** 当前节气索引；null 表示尚未拖动滑块 */
@@ -39,7 +40,7 @@ export function SeasonRing({ activeIndex, radius = 7, highlight = null, todayInd
                 <div style={{ textAlign: 'center', textShadow: '0 0 6px rgba(0,0,0,0.95)', lineHeight: 1.2 }}>
                   <div style={{ color: term.colorHex, fontSize: '11px', whiteSpace: 'nowrap', fontWeight: active ? 'bold' : 'normal' }}>
                     {term.name}
-                    {isToday && <span style={{ color: SCENE_TEXT.accent }}> ·今</span>}
+                    {isToday && <span style={{ color: SCENE_TEXT.accent }}> ·{tr('今')}</span>}
                   </div>
                 </div>
               </Html>

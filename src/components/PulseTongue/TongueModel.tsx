@@ -4,6 +4,7 @@ import { Html } from '@react-three/drei';
 import { TongueCoating, TONGUE_REGIONS } from '@/data/tongueCoatings';
 import { ELEMENT_COLORS } from '@/data/organs';
 import { UI } from '@/styles/theme';
+import { tr } from '@/i18n';
 
 /**
  * 塑形舌体（owner 2026-08-27「找更好的呈现」）：不再用光椭球——
@@ -244,14 +245,14 @@ export function TongueModel({
                     textShadow: '0 0 6px rgba(0,0,0,0.9)'
                   }}
                 >
-                  {region.label}
+                  {tr(region.label)}
                 </div>
               </Html>
             )}
           </group>
         ))}
       <Html center distanceFactor={9} position={[0, -0.7, 1.3]} style={{ pointerEvents: 'none' }}>
-        <div style={{ color: UI.textMuted, fontSize: '10px', whiteSpace: 'nowrap' }}>舌尖（前）</div>
+        <div style={{ color: UI.textMuted, fontSize: '10px', whiteSpace: 'nowrap' }}>{tr('舌尖（前）')}</div>
       </Html>
     </group>
   );

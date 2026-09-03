@@ -7,6 +7,7 @@ import { checkAcademic, getAcademicDisclaimer } from '@/utils/academicCheck';
 import { COLORS, RADIUS, ELEMENT_LABELS, UI } from '@/styles/theme';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
 import { QiMode } from './qiMotion';
+import { tr } from '@/i18n';
 
 interface Props {
   selectedOrgan: Organ | null;
@@ -76,17 +77,17 @@ export function Controls(props: Props) {
         {/* 视图皮肤：经典轴轮 / 节气能量圈（同一场景换叙事） */}
         <div style={{ display: 'flex', gap: '6px' }}>
           <button style={toggleButtonStyle(skin === 'classic')} onClick={() => onSkinChange('classic')}>
-            经典
+            {tr('经典')}
           </button>
           <button style={toggleButtonStyle(skin === 'solar')} onClick={() => onSkinChange('solar')}>
-            节气
+            {tr('节气')}
           </button>
         </div>
         {/* owner 2026-08-26：病理教学（轴坏/轮滞/复常）按钮组撤下 */}
         {/* 节气皮肤：六经↔节气 天人相应卡（绑定学习路径） */}
         {skin === 'solar' && solarEntry && (
           <>
-            <div style={{ fontSize: '11px', color: UI.textMuted }}>六经 ↔ 节气（默认=当前所学）</div>
+            <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('六经 ↔ 节气（默认=当前所学）')}</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
               {CHAPTER_SOLAR_MAP.map((entry) => (
                 <button
@@ -104,7 +105,7 @@ export function Controls(props: Props) {
             </div>
             <div style={{ fontSize: '12px', color: UI.accent, fontWeight: 'bold' }}>
               {solarStageMeta.name} ↔ {solarEntry.pointsOnly
-                ? `${solarEntry.solarStart}·${solarEntry.solarEnd} 二分点`
+                ? `${solarEntry.solarStart}·${solarEntry.solarEnd} ${tr('二分点')}`
                 : solarEntry.solarStart === solarEntry.solarEnd
                   ? solarEntry.solarStart
                   : `${solarEntry.solarStart}→${solarEntry.solarEnd}`}
@@ -115,16 +116,16 @@ export function Controls(props: Props) {
               {solarEntry.detail}
             </div>
             <div style={{ fontSize: '11px', color: UI.textSecondary, lineHeight: 1.7 }}>
-              今日 · {todayTerm.name} · {todayTerm.desc}
+              {tr('今日')} · {todayTerm.name} · {todayTerm.desc}
               {todayTerm.gua && (
                 <>
                   <br />
-                  消息卦：{todayTerm.gua}（阳爻{todayTerm.yangCount}·阴爻{todayTerm.yinCount}）
+                  {tr('消息卦：')}{todayTerm.gua}（{tr('阳爻')}{todayTerm.yangCount}·{tr('阴爻')}{todayTerm.yinCount}）
                 </>
               )}
             </div>
             <div style={{ fontSize: '9px', color: UI.textFaint, lineHeight: 1.5 }}>
-              六经与节气的对应为教学措辞，非逐字引文。
+              {tr('六经与节气的对应为教学措辞，非逐字引文。')}
             </div>
           </>
         )}
@@ -149,13 +150,13 @@ export function Controls(props: Props) {
       >
         <button
           onClick={onClockLive}
-          title="跟随系统时间"
+          title={tr('跟随系统时间')}
           style={{
             ...toggleButtonStyle(clockLive),
             fontSize: '11px', padding: '2px 8px'
           }}
         >
-          {clockLive ? '● 实时' : '实时'}
+          {clockLive ? `● ${tr('实时')}` : tr('实时')}
         </button>
         <div style={{ display: 'flex', gap: '2px' }}>
           {MERIDIAN_CLOCK.map((entry, i) => {
@@ -165,7 +166,7 @@ export function Controls(props: Props) {
               <button
                 key={entry.shichen}
                 onClick={() => onClockSelect(i)}
-                title={`${entry.shichen}时 ${entry.hours} · ${entry.meridianFull}`}
+                title={`${entry.shichen}${tr('时')} ${entry.hours} · ${entry.meridianFull}`}
                 style={{
                   width: '26px', padding: '2px 0', fontSize: '10px', lineHeight: 1.25,
                   background: active ? `${color}22` : 'transparent',
@@ -182,7 +183,7 @@ export function Controls(props: Props) {
           })}
         </div>
         <div style={{ fontSize: '11px', color: clockOrganColor, whiteSpace: 'nowrap' }}>
-          {clockEntry.hours}时 {clockEntry.meridianFull}当令
+          {clockEntry.hours}{tr('时')} {clockEntry.meridianFull}{tr('当令')}
           <span style={{ color: UI.textMuted }}> · {clockEntry.note}</span>
         </div>
         {onOpenMeridian && (
@@ -190,7 +191,7 @@ export function Controls(props: Props) {
             onClick={() => onOpenMeridian(clockEntry.meridian)}
             style={{ ...toggleButtonStyle(false), fontSize: '10px', padding: '2px 8px' }}
           >
-            经络→3D
+            {tr('经络→3D')}
           </button>
         )}
       </div>
@@ -215,7 +216,7 @@ export function Controls(props: Props) {
           <button
             key={key}
             onClick={() => onSelectElement(key)}
-            title={`点击召出 ${label}`}
+            title={`${tr('点击召出')} ${label}`}
             style={{
               display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px',
               color: UI.textSecondary, background: 'transparent', border: 'none',
@@ -233,7 +234,7 @@ export function Controls(props: Props) {
             {label}
           </button>
         ))}
-        <span className="hide-narrow" style={{ fontSize: '10px', color: UI.textFaint }}>点击召出对应脏腑</span>
+        <span className="hide-narrow" style={{ fontSize: '10px', color: UI.textFaint }}>{tr('点击召出对应脏腑')}</span>
       </div>
 
       {/* 节气滑块 */}
@@ -259,20 +260,20 @@ export function Controls(props: Props) {
           min={0}
           max={23}
           value={seasonIndex}
-          aria-label="二十四节气"
+          aria-label={tr('二十四节气')}
           onChange={(e) => onSeasonChange(parseInt(e.target.value, 10))}
           style={{ width: '300px', accentColor: UI.accent }}
         />
         <span style={{ fontSize: '13px', color: UI.accent, minWidth: '100px' }}>
-          {seasonLive ? '今日·' : ''}{currentSeason.name} · {currentSeason.desc}
+          {seasonLive ? `${tr('今日')}·` : ''}{currentSeason.name} · {currentSeason.desc}
         </span>
         {!seasonLive && (
           <button
             onClick={onSeasonToday}
-            title="回到今日节气（按日期推算，与地理位置无关）"
+            title={tr('回到今日节气（按日期推算，与地理位置无关）')}
             style={{ ...toggleButtonStyle(false), fontSize: '11px', padding: '2px 8px' }}
           >
-            回到今日
+            {tr('回到今日')}
           </button>
         )}
       </div>
@@ -296,7 +297,7 @@ export function Controls(props: Props) {
         >
           <button
             onClick={onCloseCard}
-            aria-label="关闭信息卡"
+            aria-label={tr('关闭信息卡')}
             style={{
               position: 'absolute',
               top: '10px',
@@ -324,19 +325,19 @@ export function Controls(props: Props) {
             {selectedOrgan.symbol} · {selectedOrgan.desc}
           </div>
           <div style={{ fontSize: '13px', lineHeight: 1.8, color: UI.textPrimary }}>
-            <strong style={{ color: UI.accent }}>升降：</strong>
-            {selectedOrgan.direction === 'ascend' ? '↑ 升' : '↓ 降'}
+            <strong style={{ color: UI.accent }}>{tr('升降：')}</strong>
+            {selectedOrgan.direction === 'ascend' ? `↑ ${tr('升')}` : `↓ ${tr('降')}`}
             {pairedOrgan && (
               <>
                 <br />
-                <strong style={{ color: UI.accent }}>表里配对：</strong>
+                <strong style={{ color: UI.accent }}>{tr('表里配对：')}</strong>
                 <span style={{ color: pairedOrgan.colorHex }}>{pairedOrgan.name}</span>
-                （{pairedOrgan.direction === 'ascend' ? '↑ 升' : '↓ 降'}）—— 一升一降合成
-                {selectedOrgan.desc.slice(0, 2)}圆运动
+                （{pairedOrgan.direction === 'ascend' ? `↑ ${tr('升')}` : `↓ ${tr('降')}`}）{tr('—— 一升一降合成')}
+                {selectedOrgan.desc.slice(0, 2)}{tr('圆运动')}
               </>
             )}
             <br />
-            <strong style={{ color: UI.accent }}>详情：</strong>
+            <strong style={{ color: UI.accent }}>{tr('详情：')}</strong>
             {selectedOrgan.detail}
           </div>
           {academicResult && !academicResult.pass && (
@@ -354,7 +355,7 @@ export function Controls(props: Props) {
             </div>
           )}
           <div style={{ marginTop: '12px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.6 }}>
-            {getAcademicDisclaimer()}·仅供学习，非医疗建议
+            {getAcademicDisclaimer()}·{tr('仅供学习，非医疗建议')}
           </div>
         </div>
       )}

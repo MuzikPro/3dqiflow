@@ -5,6 +5,7 @@ import { Html } from '@react-three/drei';
 import { HETU_PAIRS, HetuPair } from '@/data/hetuLuoshu';
 import { ELEMENT_COLORS, ElementKey } from '@/data/organs';
 import { UI } from '@/styles/theme';
+import { tr } from '@/i18n';
 
 /** 五行 → 多面体（规格书：土居中最复杂） */
 function ElementGeometry({ element, size }: { element: ElementKey; size: number }) {
@@ -151,7 +152,7 @@ export function HetuPairs({ layerZ, selected, onSelect, zShift = 0, merged = fal
               </mesh>
               <Html center distanceFactor={10} position={[x, y + 0.78, 0]} style={{ pointerEvents: 'none' }}>
                 <div style={{ color, fontSize: '12px', whiteSpace: 'nowrap', textShadow: '0 0 6px rgba(0,0,0,0.9)' }}>
-                  天{NUM[pair.heavenNumber - 1]}·地{NUM[pair.earthNumber - 1]}·{pair.label}
+                  {tr('天')}{tr(NUM[pair.heavenNumber - 1])}·{tr('地')}{tr(NUM[pair.earthNumber - 1])}·{pair.label}
                 </div>
               </Html>
             </group>
@@ -190,12 +191,12 @@ export function HetuPairs({ layerZ, selected, onSelect, zShift = 0, merged = fal
             <EnergyFlow from={hv} to={ea} color={color} active={active} />
             <Html center distanceFactor={10} position={[hv[0], hv[1] + 0.75, hv[2]]} style={{ pointerEvents: 'none' }}>
               <div style={{ color, fontSize: '12px', whiteSpace: 'nowrap', textShadow: '0 0 6px rgba(0,0,0,0.9)' }}>
-                天{NUM[pair.heavenNumber - 1]}·{pair.label}{axis ? ' ↑升' : ''}
+                {tr('天')}{tr(NUM[pair.heavenNumber - 1])}·{pair.label}{axis ? tr(' ↑升') : ''}
               </div>
             </Html>
             <Html center distanceFactor={10} position={[ea[0], ea[1] - 0.75, ea[2]]} style={{ pointerEvents: 'none' }}>
               <div style={{ color: UI.textSecondary, fontSize: '11px', whiteSpace: 'nowrap', textShadow: '0 0 6px rgba(0,0,0,0.9)' }}>
-                地{NUM[pair.earthNumber - 1]}{axis ? ' ↓降' : ''}
+                {tr('地')}{tr(NUM[pair.earthNumber - 1])}{axis ? tr(' ↓降') : ''}
               </div>
             </Html>
           </group>

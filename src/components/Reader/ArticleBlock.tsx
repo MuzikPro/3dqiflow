@@ -3,6 +3,7 @@ import { ARTICLES, Article, articleLabel } from '@/data/articles';
 import { getFormulaByName } from '@/data/formulas';
 import { MERIDIAN_FLOW } from '@/data/meridians';
 import { UI, RADIUS, BACKGROUND, FONTS, COLORS } from '@/styles/theme';
+import { tr } from '@/i18n';
 import { panelStyle } from '../UI/panelStyle';
 
 export type ReadingMode = 'plain' | 'full';
@@ -71,7 +72,7 @@ export function ArticleBlock({ article, mode, active, onOpenFormula, onOpenMerid
         }}
       >
         <div style={{ fontSize: '12px', opacity: 0.65, marginBottom: '8px' }}>
-          《伤寒论》· {article.chapter} · {articleLabel(article)} · {'★'.repeat(article.difficulty)}
+          {tr('《伤寒论》')}· {article.chapter} · {articleLabel(article)} · {'★'.repeat(article.difficulty)}
           {'☆'.repeat(3 - article.difficulty)}
         </div>
         <div style={{ fontFamily: FONTS.ancient, fontSize: '20px', lineHeight: 1.9 }}>
@@ -86,10 +87,10 @@ export function ArticleBlock({ article, mode, active, onOpenFormula, onOpenMerid
 
       {mode === 'full' && (
         <div style={{ ...panelStyle, borderRadius: RADIUS.md, padding: '14px 20px', marginTop: '8px' }}>
-          <Section label="白话解读">
+          <Section label={tr('白话解读')}>
             <div style={{ fontSize: '13px', color: UI.textPrimary, lineHeight: 1.9 }}>{article.modernText}</div>
           </Section>
-          <Section label="圆运动视角（彭子益理论解读）">
+          <Section label={tr('圆运动视角（彭子益理论解读）')}>
             <div
               style={{
                 fontSize: '13px', color: UI.textPrimary, lineHeight: 1.9,
@@ -100,7 +101,7 @@ export function ArticleBlock({ article, mode, active, onOpenFormula, onOpenMerid
             </div>
           </Section>
           {article.huXishuComment && (
-            <Section label="六经辨证视角（胡希恕注解）">
+            <Section label={tr('六经辨证视角（胡希恕注解）')}>
               <div
                 style={{
                   fontSize: '13px', color: UI.textSecondary, lineHeight: 1.9,
@@ -112,7 +113,7 @@ export function ArticleBlock({ article, mode, active, onOpenFormula, onOpenMerid
             </Section>
           )}
           {article.crossLink && crossTarget && (
-            <Section label="双视角对照（同一条文·两种编次）">
+            <Section label={tr('双视角对照（同一条文·两种编次）')}>
               <button
                 onClick={() => onJumpToArticle(crossTarget.id)}
                 style={{
@@ -126,14 +127,14 @@ export function ArticleBlock({ article, mode, active, onOpenFormula, onOpenMerid
                   cursor: 'pointer'
                 }}
               >
-                另见 {articleLabel(crossTarget)} ⇄
+                {tr('另见')} {articleLabel(crossTarget)} ⇄
               </button>
               <div style={{ fontSize: '11px', color: UI.textMuted, lineHeight: 1.7, marginTop: '4px' }}>
                 {article.crossLink.reason}
               </div>
             </Section>
           )}
-          <Section label="双书联动">
+          <Section label={tr('双书联动')}>
             {article.relatedFormulas.map((name) => (
               <LinkChip key={name} text={name} onOpen={getFormulaByName(name) ? () => onOpenFormula(name) : undefined} />
             ))}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { tr } from '@/i18n';
 import { ACUPOINTS, MERIDIAN_META } from '@/data/acupoints';
 import { UI, RADIUS } from '@/styles/theme';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
@@ -157,13 +158,13 @@ export function AcupointControls(props: Props) {
             style={{ ...toggleButtonStyle(open === 'view'), pointerEvents: 'auto' }}
             onClick={() => setOpen((v) => (v === 'view' ? 'none' : 'view'))}
           >
-            {open === 'view' ? '× 视角' : '⚙ 视角'}
+            {open === 'view' ? `× ${tr('视角')}` : `⚙ ${tr('视角')}`}
           </button>
           <button
             style={{ ...toggleButtonStyle(open === 'list'), pointerEvents: 'auto' }}
             onClick={() => setOpen((v) => (v === 'list' ? 'none' : 'list'))}
           >
-            {open === 'list' ? '× 经脉' : '☰ 经脉'}
+            {open === 'list' ? `× ${tr('经脉')}` : `☰ ${tr('经脉')}`}
           </button>
         </div>
       )}
@@ -182,8 +183,8 @@ export function AcupointControls(props: Props) {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="搜索：穴位 / 经络 / 脉 名"
-          aria-label="按名称搜索穴位、经络与奇经"
+          placeholder={tr('搜索：穴位 / 经络 / 脉 名')}
+          aria-label={tr('按名称搜索穴位、经络与奇经')}
           style={{
             width: '100%', boxSizing: 'border-box', padding: '6px 9px',
             fontSize: '12px', color: UI.textPrimary, background: 'transparent',
@@ -197,7 +198,7 @@ export function AcupointControls(props: Props) {
           }}>
             {hits.length === 0 && (
               <div style={{ fontSize: '11px', color: UI.textFaint, padding: '6px 9px' }}>
-                没有这个名字（只按名检索）
+                {tr('没有这个名字（只按名检索）')}
               </div>
             )}
             {hits.map((h) => (
@@ -209,83 +210,83 @@ export function AcupointControls(props: Props) {
                   background: 'transparent', cursor: 'pointer', padding: '5px 9px'
                 }}
               >
-                <span style={{ fontSize: '12px', color: UI.textPrimary }}>{h.zh}</span>
-                <span style={{ fontSize: '10px', color: UI.textFaint, marginLeft: '8px' }}>{h.sub}</span>
+                <span style={{ fontSize: '12px', color: UI.textPrimary }}>{tr(h.zh)}</span>
+                <span style={{ fontSize: '10px', color: UI.textFaint, marginLeft: '8px' }}>{tr(h.sub)}</span>
               </button>
             ))}
           </div>
         )}
-        <div style={{ fontSize: '11px', color: UI.textMuted }}>视角</div>
+        <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('视角')}</div>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           {(Object.keys(VIEW_LABELS) as AtlasViewKey[]).map((k) => (
             <button key={k} style={toggleButtonStyle(view === k)} onClick={() => onViewChange(k)}>
-              {VIEW_LABELS[k]}
+              {tr(VIEW_LABELS[k])}
             </button>
           ))}
         </div>
-        <div style={{ fontSize: '11px', color: UI.textMuted }}>体表</div>
+        <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('体表')}</div>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button style={toggleButtonStyle(sex === 'male')} onClick={() => onSexChange('male')}
-                  title="Visible Human 男性体表；穴位即按此体表推导">
-            男体
+                  title={tr('Visible Human 男性体表；穴位即按此体表推导')}>
+            {tr('男体')}
           </button>
           <button style={toggleButtonStyle(sex === 'female')} onClick={() => onSexChange('female')}
-                  title="Visible Human 女性体表；穴位按她自己的骨性标志重推">
-            女体
+                  title={tr('Visible Human 女性体表；穴位按她自己的骨性标志重推')}>
+            {tr('女体')}
           </button>
         </div>
         {/* 女体重推方法全文移「声明」页（owner 2026-08-26），按钮 title 留一句 */}
         <button style={toggleButtonStyle(liuzhu)} onClick={onToggleLiuzhu}
-                title="十二时辰经络当令：当令经全亮加速，余经压暗为影。经典通行内容，教学展示">
-          子午流注{liuzhu ? '·开' : ''}
+                title={tr('十二时辰经络当令：当令经全亮加速，余经压暗为影。经典通行内容，教学展示')}>
+          {tr('子午流注')}{liuzhu ? tr('·开') : ''}
         </button>
-        <div style={{ fontSize: '11px', color: UI.textMuted }}>拖动</div>
+        <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('拖动')}</div>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button
             style={toggleButtonStyle(dragMode === 'rotate')}
             onClick={() => onDragModeChange('rotate')}
-            title="左键拖动＝转动人体"
+            title={tr('左键拖动＝转动人体')}
           >
-            旋转
+            {tr('旋转')}
           </button>
           <button
             style={toggleButtonStyle(dragMode === 'pan')}
             onClick={() => onDragModeChange('pan')}
-            title="左键拖动＝拖动人体，把想看的部位拖到画面中央"
+            title={tr('左键拖动＝拖动人体，把想看的部位拖到画面中央')}
           >
-            平移
+            {tr('平移')}
           </button>
         </div>
         <div style={{ fontSize: '9px', color: UI.textFaint, lineHeight: 1.5 }}>
-          选「平移」后直接拖动人体到画面中央；按住 Shift 可临时平移。滚轮缩放。
+          {tr('选「平移」后直接拖动人体到画面中央；按住 Shift 可临时平移。滚轮缩放。')}
         </div>
         <button style={toggleButtonStyle(bodyLevel !== 'off')} onClick={onCycleBody}>
-          {bodyLevel === 'clear' ? '人体：清晰' : bodyLevel === 'faint' ? '人体：淡' : '人体：隐藏'}
+          {bodyLevel === 'clear' ? tr('人体：清晰') : bodyLevel === 'faint' ? tr('人体：淡') : tr('人体：隐藏')}
         </button>
         <button style={toggleButtonStyle(qi)} onClick={onToggleQi}
-                title="沿穴序推进，方向即该经气机运行方向">
-          气机流动：{qi ? '开' : '关'}
+                title={tr('沿穴序推进，方向即该经气机运行方向')}>
+          {tr('气机流动：')}{qi ? tr('开') : tr('关')}
         </button>
         {qi && (
           <input
             type="range" min={0.3} max={3} step={0.1} value={qiSpeed}
-            aria-label="气机流速"
+            aria-label={tr('气机流速')}
             onChange={(e) => onQiSpeed(parseFloat(e.target.value))}
             style={{ width: '150px', accentColor: UI.accent }}
           />
         )}
         <button style={toggleButtonStyle(labelOn)} onClick={onCycleLabel}
-                title="自动：穴少时才标名；常显：一律标名；隐藏：只留穴点">
-          穴名：{labelMode === 'auto' ? '自动' : labelMode === 'always' ? '常显' : '隐藏'}
+                title={tr('自动：穴少时才标名；常显：一律标名；隐藏：只留穴点')}>
+          {tr('穴名：')}{labelMode === 'auto' ? tr('自动') : labelMode === 'always' ? tr('常显') : tr('隐藏')}
         </button>
         <div style={{ fontSize: '11px', color: UI.textMuted }}>
-          当前显示 {pointCount} 穴{labelMode === 'auto' && !labelOn ? '（穴多，暂不标名）' : ''}
+          {tr('当前显示')} {pointCount} {tr('穴')}{labelMode === 'auto' && !labelOn ? tr('（穴多，暂不标名）') : ''}
         </div>
         {/* 安全性一句随内容同屏（源数据标 schematic_unvalidated）；
             方法与许可全文集中在顶栏「声明」页（owner 2026-08-26） */}
         <div style={{ fontSize: '9px', color: UI.textFaint, lineHeight: 1.6, marginTop: '2px' }}>
-          穴位坐标为<b>示意定位</b>，不可用于在真人身上取穴。
-          定位方法、数据出处与许可（CC BY 4.0）详见顶栏「声明」页。
+          {tr('穴位坐标为')}<b>{tr('示意定位')}</b>{tr('，不可用于在真人身上取穴。')}
+          {tr('定位方法、数据出处与许可（CC BY 4.0）详见顶栏「声明」页。')}
         </div>
       </div>
       )}
@@ -309,7 +310,7 @@ export function AcupointControls(props: Props) {
                        fontSize: '10px', padding: '2px 7px' }}
               onClick={() => onSetAll(g.codes)}
             >
-              {g.label}
+              {tr(g.label)}
             </button>
           ))}
         </div>
@@ -331,8 +332,8 @@ export function AcupointControls(props: Props) {
               <span style={{ width: '8px', height: '8px', borderRadius: '50%',
                              background: meridianColor(code), flexShrink: 0 }} />
               <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25 }}>
-                {m.zh}
-                <span style={{ fontSize: '9px', color: UI.textFaint }}>{flowOf(code)}</span>
+                {tr(m.zh)}
+                <span style={{ fontSize: '9px', color: UI.textFaint }}>{tr(flowOf(code))}</span>
               </span>
               <span style={{ marginLeft: 'auto', fontSize: '10px', color: UI.textFaint }}>
                 {m.count}
@@ -344,7 +345,7 @@ export function AcupointControls(props: Props) {
         {/* 奇经八脉：任督（上方 CV/GV 行）之外的六脉。奇经无本经穴，
             走线为通行教材交会穴序列的教学示意，右侧数字是交会穴数。 */}
         <div style={{ fontSize: '10px', color: UI.textMuted, margin: '8px 0 2px' }}>
-          奇经八脉（任督见上）
+          {tr('奇经八脉（任督见上）')}
         </div>
         {VESSEL_SIX.map((code) => {
           const v = VESSEL_META.find((x) => x.code === code);
@@ -354,7 +355,7 @@ export function AcupointControls(props: Props) {
             <button
               key={code}
               onClick={() => onToggle(code)}
-              title={v.summary}
+              title={tr(v.summary)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '7px', width: '100%',
                 fontSize: '12px', padding: '3px 4px', border: 'none', cursor: 'pointer',
@@ -365,11 +366,11 @@ export function AcupointControls(props: Props) {
               <span style={{ width: '8px', height: '8px', borderRadius: '50%',
                              background: meridianColor(code), flexShrink: 0 }} />
               <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25 }}>
-                {v.zh}
-                <span style={{ fontSize: '9px', color: UI.textFaint }}>{v.flow}</span>
+                {tr(v.zh)}
+                <span style={{ fontSize: '9px', color: UI.textFaint }}>{tr(v.flow)}</span>
               </span>
               <span style={{ marginLeft: 'auto', fontSize: '10px', color: UI.textFaint }}
-                    title="交会穴数（奇经无本经穴）">
+                    title={tr('交会穴数（奇经无本经穴）')}>
                 {v.count}
               </span>
             </button>
@@ -388,18 +389,18 @@ export function AcupointControls(props: Props) {
             padding: '16px', animation: 'fadeIn 0.3s'
           }}
         >
-          <button onClick={onClose} aria-label="关闭穴位卡"
+          <button onClick={onClose} aria-label={tr('关闭穴位卡')}
                   style={{ position: 'absolute', top: '8px', right: '10px', background: 'none',
                            border: 'none', color: UI.textMuted, fontSize: '18px', cursor: 'pointer' }}>
             ×
           </button>
           <div style={{ fontSize: '17px', fontWeight: 'bold', color: meridianColor(selected.meridian) }}>
-            {selected.zh} <span style={{ fontSize: '12px', color: UI.textMuted }}>{selected.code}</span>
+            {tr(selected.zh)} <span style={{ fontSize: '12px', color: UI.textMuted }}>{selected.code}</span>
           </div>
           <div style={{ fontSize: '11px', color: UI.textMuted, margin: '4px 0 10px' }}>
             {selected.pinyin} · {selected.region}
-            {selected.mirrored ? ' · 对侧' : ''}
-            <span style={{ color: UI.accent }}> · {flowOf(selected.meridian)}</span>
+            {selected.mirrored ? ` · ${tr('对侧')}` : ''}
+            <span style={{ color: UI.accent }}> · {tr(flowOf(selected.meridian))}</span>
           </div>
           {/* 交会穴身份：奇经借行此穴——借来仍属本经，如实双标 */}
           {vesselsThrough(selected.code).length > 0 && (
@@ -412,41 +413,41 @@ export function AcupointControls(props: Props) {
                     color: meridianColor(v), border: `1px solid ${meridianColor(v)}`,
                     borderRadius: '8px', padding: '0 6px', marginRight: '5px', whiteSpace: 'nowrap'
                   }}>
-                    {meta.zh}交会穴
+                    {tr(meta.zh)}{tr('交会穴')}
                   </span>
                 );
               })}
               <span style={{ color: UI.textFaint }}>
-                本属{MERIDIAN_META.find((m) => m.code === selected.meridian)?.zh ?? selected.meridian}
+                {tr('本属')}{tr(MERIDIAN_META.find((m) => m.code === selected.meridian)?.zh ?? selected.meridian)}
               </span>
             </div>
           )}
           {selected.loc && (
             <>
               <div style={{ fontSize: '10px', color: UI.textMuted, letterSpacing: '2px', marginBottom: '4px' }}>
-                定位
+                {tr('定位')}
               </div>
-              <div style={{ fontSize: '13px', color: UI.textPrimary, lineHeight: 1.9 }}>{selected.loc}</div>
+              <div style={{ fontSize: '13px', color: UI.textPrimary, lineHeight: 1.9 }}>{tr(selected.loc)}</div>
             </>
           )}
           {selected.derived && (
             <div style={{ marginTop: '10px', padding: '8px 10px', borderRadius: RADIUS.sm,
                           border: `1px solid ${UI.accent}`, fontSize: '11px', lineHeight: 1.8 }}>
-              <span style={{ color: UI.accent, fontWeight: 'bold' }}>逐穴推导位</span>
-              <div style={{ color: UI.textPrimary, marginTop: '2px' }}>{selected.rule}</div>
+              <span style={{ color: UI.accent, fontWeight: 'bold' }}>{tr('逐穴推导位')}</span>
+              <div style={{ color: UI.textPrimary, marginTop: '2px' }}>{tr(selected.rule ?? '')}</div>
               {selected.deriveNote && (
-                <div style={{ color: UI.textMuted, marginTop: '2px' }}>※ {selected.deriveNote}</div>
+                <div style={{ color: UI.textMuted, marginTop: '2px' }}>※ {tr(selected.deriveNote)}</div>
               )}
             </div>
           )}
           <div style={{ marginTop: '12px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.7 }}>
             {selected.loc
-              ? `定位文本审核：${selected.locReview}；`
-              : '定位文本随内容包提供（开源版示例见肺经）；'}
+              ? `${tr('定位文本审核：')}${selected.locReview}${tr('；')}`
+              : tr('定位文本随内容包提供（开源版示例见肺经）；')}
             {selected.derived
-              ? '此穴按定位文本与骨度分寸逐条推导，仍属教学示意。'
-              : '图上坐标为整经重定位的示意位（schematic_unvalidated）。'}
-            取穴请依定位文本与专业指导。
+              ? tr('此穴按定位文本与骨度分寸逐条推导，仍属教学示意。')
+              : tr('图上坐标为整经重定位的示意位（schematic_unvalidated）。')}
+            {tr('取穴请依定位文本与专业指导。')}
           </div>
         </div>
       )}

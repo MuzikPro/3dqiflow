@@ -1,5 +1,6 @@
 import { SOLAR_TERMS, SEASON_PHASES } from '@/data/solarTerms';
 import { getAcademicDisclaimer } from '@/utils/academicCheck';
+import { tr } from '@/i18n';
 import { UI, RADIUS } from '@/styles/theme';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
 
@@ -48,17 +49,17 @@ export function SolarControls(props: Props) {
         }}
       >
         <button style={toggleButtonStyle(playing)} onClick={onPlayToggle}>
-          {playing ? '⏸ 暂停' : '▶ 播放'}
+          {playing ? tr('⏸ 暂停') : tr('▶ 播放')}
         </button>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-          <button style={toggleButtonStyle(slowmo)} onClick={onSlowmoToggle}>慢动作</button>
-          <button style={toggleButtonStyle(compare)} onClick={onCompareToggle}>对比</button>
-          <button style={toggleButtonStyle(humanSync)} onClick={onHumanSyncToggle}>人体联动</button>
+          <button style={toggleButtonStyle(slowmo)} onClick={onSlowmoToggle}>{tr('慢动作')}</button>
+          <button style={toggleButtonStyle(compare)} onClick={onCompareToggle}>{tr('对比')}</button>
+          <button style={toggleButtonStyle(humanSync)} onClick={onHumanSyncToggle}>{tr('人体联动')}</button>
         </div>
         <div style={{ fontSize: '11px', color: UI.textMuted, lineHeight: 1.7, marginTop: '4px' }}>
-          冬至沉于底 · 夏至浮于顶
+          {tr('冬至沉于底 · 夏至浮于顶')}
           <br />
-          左半圈升 · 右半圈降
+          {tr('左半圈升 · 右半圈降')}
         </div>
       </div>
 
@@ -76,8 +77,8 @@ export function SolarControls(props: Props) {
         </div>
         {term.gua && (
           <div style={{ fontSize: '12px', color: UI.textPrimary, lineHeight: 1.8 }}>
-            <strong style={{ color: UI.accent }}>消息卦：</strong>
-            {term.gua}（阳爻 {term.yangCount} · 阴爻 {term.yinCount}）
+            <strong style={{ color: UI.accent }}>{tr('消息卦：')}</strong>
+            {term.gua}{tr('（阳爻 ')}{term.yangCount}{tr(' · 阴爻 ')}{term.yinCount}{tr('）')}
           </div>
         )}
       </div>
@@ -94,7 +95,7 @@ export function SolarControls(props: Props) {
         >
           <button
             onClick={onCloseDetail}
-            aria-label="关闭详情"
+            aria-label={tr('关闭详情')}
             style={{
               position: 'absolute', top: '10px', right: '10px',
               background: 'none', border: 'none', color: UI.textMuted, fontSize: '18px', cursor: 'pointer'
@@ -109,17 +110,17 @@ export function SolarControls(props: Props) {
           <div style={{ fontSize: '12px', color: UI.textPrimary, lineHeight: 1.9 }}>
             {detail.gua && (
               <>
-                <strong style={{ color: UI.accent }}>消息卦：</strong>
-                {detail.gua}（阳爻 {detail.yangCount} · 阴爻 {detail.yinCount}）
+                <strong style={{ color: UI.accent }}>{tr('消息卦：')}</strong>
+                {detail.gua}{tr('（阳爻 ')}{detail.yangCount}{tr(' · 阴爻 ')}{detail.yinCount}{tr('）')}
                 <br />
               </>
             )}
-            <strong style={{ color: UI.accent }}>人体气机：</strong>
-            {detailIndex !== null && (termPhaseText(detailIndex))}
+            <strong style={{ color: UI.accent }}>{tr('人体气机：')}</strong>
+            {detailIndex !== null && tr(termPhaseText(detailIndex))}
           </div>
           <div style={{ marginTop: '12px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.6 }}>
-            节气与人体气机的对应是教学模型简化，临床必须辨证。
-            {getAcademicDisclaimer()}·仅供学习，非医疗建议
+            {tr('节气与人体气机的对应是教学模型简化，临床必须辨证。')}
+            {tr(getAcademicDisclaimer())}{tr('·仅供学习，非医疗建议')}
           </div>
         </div>
       )}
@@ -139,7 +140,7 @@ export function SolarControls(props: Props) {
           min={0}
           max={SOLAR_TERMS.length - 1}
           value={termIndex}
-          aria-label="二十四节气"
+          aria-label={tr('二十四节气')}
           onChange={(e) => onJump(parseInt(e.target.value, 10))}
           style={{ width: '320px', accentColor: UI.accent }}
         />

@@ -6,6 +6,7 @@ import { BACKGROUND, THREE_DEFAULTS } from '@/styles/theme';
 import { VariationTree } from './VariationTree';
 import { toggleButtonStyle } from '../UI/panelStyle';
 import { FormulaControls } from './FormulaControls';
+import { tr } from '@/i18n';
 
 // owner 2026-08-26：3D 球环舞台撤下——本页改为纯内容页：左选方、
 // 中部读方（FormulaControls 的 formula-card）。Canvas 只在查看
@@ -65,7 +66,7 @@ export function Formula3D({ initialFormulaName, onOpenArticle }: Props) {
           }}
           onClick={() => setShowTree((v) => !v)}
         >
-          🌳 {formula.familyRoot}化裁树{showTree ? ' · 收起' : ''}
+          🌳 {formula.familyRoot}{tr('化裁树')}{showTree ? ` · ${tr('收起')}` : ''}
         </button>
       )}
 

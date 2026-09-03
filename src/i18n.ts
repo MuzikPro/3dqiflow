@@ -62,6 +62,41 @@ export function t(lang: Lang, key: StringKey): string {
   return STRINGS[key][lang];
 }
 
+/* ------------------------------------------------------------------ *
+ * 全局语言开关（owner 2026-09-03：Show HN 前补齐英文界面）
+ *
+ * 组件不再逐层传 lang：App 以 useLang() 订阅并用 key={lang} 整树重挂，
+ * 各组件用 tr('中文原文') 就地取译。词典按中文原串为键（i18nDict.ts），
+ * 缺词回退中文——UI 骨架全量收录；经典内容不机器翻译（见文件头范围界定）。
+ * ------------------------------------------------------------------ */
+import { useSyncExternalStore } from 'react';
+import { EN } from './i18nDict';
+
+// 惰性求值：KEY_LANG 在本文件更靠后（const 有暂时性死区），模块顶层直接
+// loadLang() 会被其 try/catch 吞成 'zh'——首次访问时再读取存储。
+let current: Lang | null = null;
+const lang0 = (): Lang => (current ??= loadLang());
+const subscribers = new Set<() => void>();
+
+export function getLang(): Lang {
+  return lang0();
+}
+export function setLang(lang: Lang): void {
+  current = lang;
+  saveLang(lang);
+  subscribers.forEach((fn) => fn());
+}
+export function useLang(): Lang {
+  return useSyncExternalStore(
+    (cb) => { subscribers.add(cb); return () => subscribers.delete(cb); },
+    () => lang0()
+  );
+}
+/** 界面串就地取译：zh 原样返回；en 查词典，缺词回退中文（决不虚构） */
+export function tr(zh: string): string {
+  return lang0() === 'zh' ? zh : (EN[zh] ?? zh);
+}
+
 const KEY_LANG = 'yy_lang';
 const KEY_THEME = 'yy_theme';
 export type ThemeMode = 'dark' | 'light' | 'system';

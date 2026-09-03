@@ -4,6 +4,7 @@ import { ThreeEvent } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { Organ } from '@/data/organs';
 import { SCENE_TEXT } from '@/styles/theme';
+import { tr } from '@/i18n';
 
 /** 点击联动状态（2026-08-19 审查修正 C3） */
 export type OrganHighlight = 'selected' | 'paired' | 'dimmed' | 'normal';
@@ -98,7 +99,7 @@ export function OrganMesh({ organ, highlight, seasonEmphasis, onSelect, visible,
                     border: `1px solid ${organ.colorHex}`, borderRadius: '6px', verticalAlign: 'middle'
                   }}
                 >
-                  当令
+                  {tr('当令')}
                 </span>
               )}
             </div>

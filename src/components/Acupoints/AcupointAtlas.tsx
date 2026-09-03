@@ -1,4 +1,5 @@
 import { Suspense, createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { tr } from '@/i18n';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Html } from '@react-three/drei';
@@ -170,7 +171,7 @@ function PointMark({
             letterSpacing: '0.5px', whiteSpace: 'nowrap', opacity: hover || selected ? 1 : 0.9,
             textShadow: '0 0 5px rgba(0,0,0,0.98), 0 0 2px rgba(0,0,0,1)'
           }}>
-            {p.zh}{(hover || selected) && ` ${p.code}`}
+            {tr(p.zh)}{(hover || selected) && ` ${p.code}`}
           </div>
         </Html>
       )}
@@ -531,9 +532,9 @@ export function AcupointAtlas() {
           <button
             style={{ ...toggleButtonStyle(liveClock), whiteSpace: 'nowrap' }}
             onClick={() => gotoShichen(currentShichenIndex(), true)}
-            title="跟随当前时辰（每分钟对表）"
+            title={tr('跟随当前时辰（每分钟对表）')}
           >
-            ● 实时
+            ● {tr('实时')}
           </button>
           <span style={{ display: 'flex', gap: '3px', flexShrink: 0 }}>
             {MERIDIAN_CLOCK.map((entry, i) => {
@@ -543,7 +544,7 @@ export function AcupointAtlas() {
                 <button
                   key={entry.shichen}
                   onClick={() => gotoShichen(i, false)}
-                  title={`${entry.hours}时 ${entry.meridianFull}当令`}
+                  title={`${entry.hours}${tr('时')} ${tr(entry.meridianFull)}${tr('当令')}`}
                   style={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center',
                     width: '30px', padding: '2px 0', border: 'none', cursor: 'pointer',
@@ -552,10 +553,10 @@ export function AcupointAtlas() {
                   }}
                 >
                   <span style={{ fontSize: '12px', color: on ? c : UI.textSecondary, fontWeight: on ? 'bold' : 'normal' }}>
-                    {entry.shichen}
+                    {tr(entry.shichen)}
                   </span>
                   <span style={{ fontSize: '8px', color: on ? c : UI.textFaint, whiteSpace: 'nowrap' }}>
-                    {entry.organ}
+                    {tr(entry.organ)}
                   </span>
                 </button>
               );
@@ -566,9 +567,9 @@ export function AcupointAtlas() {
             overflow: 'hidden', textOverflow: 'ellipsis'
           }}>
             <span style={{ color: meridianColor(dangCode), fontWeight: 'bold' }}>
-              {clockEntry.hours}时 {clockEntry.meridianFull}当令
+              {clockEntry.hours}{tr('时')} {tr(clockEntry.meridianFull)}{tr('当令')}
             </span>
-            <span style={{ color: UI.textMuted }}> · {clockEntry.note}</span>
+            <span style={{ color: UI.textMuted }}> · {tr(clockEntry.note)}</span>
           </span>
         </div>
       )}

@@ -6,6 +6,8 @@
 
 > 中气如轴，四维如轮；轴运轮行，轮运轴灵。 — 彭子益《圆运动的古中医学》
 
+![3DQiFlow demo — axis-wheel model, 12-meridian flow, formula explorer](docs/demo.gif)
+
 3DQiFlow lets you **see** the qi circulation model described in Peng Ziyi's *The Round-Motion TCM* (圆运动的古中医学) and Zhang Zhongjing's *Shanghan Lun* (伤寒论) — instead of just reading about it. Rotate the axis-wheel model, watch the 12 meridians flow as paired ascending/descending circles, decompose classical formulas into animated 3D herb spheres, and walk the 24 solar terms around a seasonal ring.
 
 ## Features (open-source engine)

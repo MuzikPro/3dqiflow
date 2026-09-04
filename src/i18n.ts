@@ -102,11 +102,13 @@ const KEY_THEME = 'yy_theme';
 export type ThemeMode = 'dark' | 'light' | 'system';
 
 export function loadLang(): Lang {
+  // owner 2026-09-03：英文为默认落地语言（Show HN 面向国际读者）；
+  // 已明确选过中文/日文的用户仍按其存量偏好。
   try {
     const v = localStorage.getItem(KEY_LANG);
-    return v === 'en' || v === 'ja' ? v : 'zh';
+    return v === 'zh' || v === 'ja' ? v : 'en';
   } catch {
-    return 'zh';
+    return 'en';
   }
 }
 export function saveLang(lang: Lang): void {

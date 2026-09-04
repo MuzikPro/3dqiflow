@@ -430,6 +430,23 @@ export const EN: Record<string, string> = {
   '心包护心，相火下行': 'The pericardium guards the heart; ministerial fire descends',
   '三焦通调，百脉归息': 'The Triple Energizer regulates throughout; the vessels return to rest',
 
+  // —— 口诀图与体表切换（Circle 教学位）——
+  '头': 'Head',
+  '胸': 'Chest',
+  '腹': 'Abdomen',
+  '左手': 'L. hand',
+  '右手': 'R. hand',
+  '左脚': 'L. foot',
+  '右脚': 'R. foot',
+  '「手之三阴，从胸走手」': '"The three yin of the hand run from chest to hand"',
+  '「手之三阳，从手走头」': '"The three yang of the hand run from hand to head"',
+  '「足之三阳，从头走足」': '"The three yang of the foot run from head to foot"',
+  '「足之三阴，从足走腹」': '"The three yin of the foot run from foot to abdomen"',
+  '举手站立 · 十二经同时并行': 'Standing with arms raised · all 12 meridians flow at once',
+  '循行口诀图：举手站立·阴升阳降，四束蝶翼如环无端': 'Route-mnemonic diagram: arms raised, yin rises and yang descends — four bundles, an endless ring',
+  'Visible Human 男性体表；教学走线按此体表贴合': 'Visible Human male body surface; teaching routes conform to this surface',
+  '女体走线＝男体教学线贴回她的体表，指趾端取她本人推导位；属教学示意': "Female routes = the male teaching lines re-fitted to her surface, digit tips from her own derived points; a teaching schematic",
+
   // —— 脉舌3D（PulseTongue）——
   '特征': 'Features',
   '圆运动解读': 'Round-Motion reading',

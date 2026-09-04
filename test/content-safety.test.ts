@@ -40,8 +40,10 @@ function projectProse(): Array<{ where: string; text: string }> {
 
 describe('prohibited medical-guidance wording', () => {
   it('no project-written prose contains procedural or recommendation language', () => {
+    // 服法（煎服法）属原文引用，单列登记不拦截——见 contentSafety.ts 的
+    // ADMINISTRATION_WORDING 说明；此处只拦项目自撰的操作指引与推荐语气。
     const offenders = projectProse()
-      .map((p) => ({ ...p, hits: scanText(p.text) }))
+      .map((p) => ({ ...p, hits: scanText(p.text).filter((h) => h.kind !== 'administration') }))
       .filter((p) => p.hits.length > 0)
       .map((p) => `${p.where}: ${p.hits.map((h) => `${h.ruleZh}("${h.excerpt}")`).join(', ')}`);
     expect(offenders).toEqual([]);
@@ -54,8 +56,13 @@ describe('prohibited medical-guidance wording', () => {
     expect(scanText('艾灸 15 分钟')).not.toEqual([]);
     expect(scanText('建议取足三里穴')).not.toEqual([]);
     expect(scanText('可治愈此病')).not.toEqual([]);
+    // 内容包实测串：初版规则一条都没抓到（owner 2026-09-04 对全量 9,906 串实扫）
+    expect(scanText('丸剂：炼蜜为丸如鸡子黄大，日三四服、夜二服')).not.toEqual([]);
+    expect(scanText('腹中未热，益至三四丸——丸剂可加量至腹中觉热')).not.toEqual([]);
+    expect(scanText('温服一升，日三服')).not.toEqual([]);
     // 而正常教学陈述必须放行
     expect(scanText('肺经自胸走手，属降')).toEqual([]);
+    expect(scanText('君（桂枝）升左·臣（芍药）降右')).toEqual([]);
     expect(scanText('The Lung meridian runs from chest to hand.')).toEqual([]);
   });
 });

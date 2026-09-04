@@ -82,12 +82,16 @@ npm test          # content-safety gate + data audit (14 assertions)
 npm run audit     # data audit only
 ```
 
-**Content safety** (`src/utils/contentSafety.ts`, `test/content-safety.test.ts`) scans every project-written string shipped in the repo — UI dictionary, derivation rules, round-motion readings — and fails the build on:
+**Content safety** (`src/utils/contentSafety.ts`, `test/content-safety.test.ts`) scans every project-written string shipped in the repo — UI dictionary, derivation rules, round-motion readings — and **fails the build** on:
 
-- procedural medical guidance: needle depth/angle, moxibustion dosage, bloodletting, electro-stimulation, dosing instructions;
+- procedural medical guidance: needle depth/angle, moxibustion dosage, bloodletting, electro-stimulation;
 - recommendation language: imperative point-selection, second-person treatment advice, cure claims.
 
+Classical **administration text** (煎服法 — "decoct in seven sheng", "take warm, three times daily") is handled differently: it is *registered, not blocked*. It is verbatim Shanghan Lun quotation and it is what a 经方 substantially *is*, so it is displayed as quotation under 服法要点 rather than suppressed — but it is counted, so it cannot drift into project-written prose unnoticed. That distinction is the point: the gate separates *our* wording from *the source's*.
+
 It also asserts the search index stays name-only, and that acupoint records carry no indications field at all — a searchable symptom would make this a symptom→point recommender however the entries were worded. Crucially the scanner is **falsifiable**: a test feeds it known-bad strings and fails if they are *not* caught, so a passing suite means something.
+
+That falsifiability test exists because the first version of this scanner was wrong. Run against the full content corpus (9,906 strings), it found **nothing** — not because the corpus was clean, but because the dosing pattern expected `每日三剂` while the classical text says `日三服`. It missed 71 real strings, and one piece of project-written prose that stated a dose allowance rather than reporting what the source records. Both are fixed; the corpus strings it originally missed are now regression tests. A safety gate that has never been shown to catch anything is decoration.
 
 **Data audit** (`test/data-audit.test.ts`) checks the output invariants of the derivation: coordinates inside the body frame, no non-finite values, unique point codes, both bodies covering the same point set (catching half-finished re-derivations), and mirrored positions actually mirroring. It also records how much degenerate data the render layer absorbs, so that number failing upward is a signal to fix the generator rather than thicken the patch.
 
@@ -100,7 +104,7 @@ Published deliberately. A tool about the body that hides its error bars is worse
 - **The derivation is not reproducible from this repo.** You can audit the output; you cannot re-run the generator.
 - **Female toe positions are a proportional mapping**, not registered to her own phalanges the way the male toes are. Neither mesh has separated fingers or toes on the surface, so digit-tip points sit on a merged surface.
 - **351 of 362 points ship without location text**, so most of the atlas cannot be checked against its own stated rule from this repo alone.
-- **The content-safety scanner is pattern-based.** It catches the formulations it knows about; it is a gate, not a proof. Novel phrasing can pass it — reports of a miss are treated as bugs.
+- **The content-safety scanner is pattern-based.** It catches the formulations it knows about; it is a gate, not a proof. Its first version silently passed a corpus containing 71 violations because the patterns were written from imagination rather than from the data — novel phrasing can still pass it today, and reports of a miss are treated as bugs.
 - **No content here has expert review.** Round-motion readings and pathomechanism notes are study notes. Where the commercial pack contains entries with no documented source, they are marked as model-derived and unsourced in the UI rather than being quietly presented as reference material.
 - **Coverage is uneven.** The Lung meridian is the most carefully worked; other meridians rely more on the whole-meridian repositioning pass than on per-point derivation.
 

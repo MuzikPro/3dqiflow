@@ -18,7 +18,7 @@ export const PROHIBITED_PROCEDURE = [
   { id: 'moxa-dose', zh: '灸量', pattern: /(艾灸|温灸|溫灸|隔姜灸|隔薑灸)\s*[0-9０-９]+\s*(壮|壯|分钟|分鐘|min)/ },
   { id: 'bloodletting', zh: '放血', pattern: /(点刺|點刺|刺络|刺絡|放血|三棱针|三棱針)/ },
   { id: 'electro', zh: '电针', pattern: /(电针|電針|电刺激|電刺激)\s*[0-9０-９]/ },
-  { id: 'dose-order', zh: '剂量指令', pattern: /(每日|每天|一日)\s*[0-9０-９一二三四五六七八九]+\s*(剂|劑|次)\s*[，,。]?\s*(服|口服|温服|溫服|饮|飲)/ }
+  { id: 'dose-order', zh: '剂量指令', pattern: /((每日|每天|一日|日|夜)\s*[0-9０-９一二三四五六七八九]{1,2}\s*(剂|劑|次|服)|分温[再三]服|顿服|頓服)/ }
 ] as const;
 
 /** 推荐语气：把教学陈述变成对读者的处置建议 */
@@ -28,10 +28,22 @@ export const PROHIBITED_RECOMMENDATION = [
   { id: 'cure-claim', zh: '疗效承诺', pattern: /(可治愈|能治愈|根治|保证|保證)[^。；]{0,10}(病|症)/ }
 ] as const;
 
+/**
+ * 服法（口服给药法）：与针灸操作不同，煎服法是《伤寒论》方剂本身的一部分，
+ * 属原文引用而非本项目自撰指引。故单列一类——**登记待判**，由 owner 决定
+ * 某条是否呈现，而不是由本闸径直拦下。项目自撰文案中出现这类措辞仍属缺陷。
+ */
+export const ADMINISTRATION_WORDING = [
+  { id: 'dose-escalation', zh: '加量指令', pattern: /(益至|加至|可加量|增至)\s*[0-9０-９一二三四五六七八九]/ },
+  { id: 'stop-rule', zh: '停服指令', pattern: /(停后服|停後服|中病即止|不可过服|不可過服)/ },
+  { id: 'admin-manner', zh: '服法', pattern: /(温服|溫服|啜热稀粥|啜熱稀粥|温覆|溫覆|服已须臾|服已須臾)/ },
+  { id: 'decoct', zh: '煎法', pattern: /(水煎|炼蜜为丸|煉蜜為丸|先煎|后下|後下)/ }
+] as const;
+
 export interface SafetyHit {
   ruleId: string;
   ruleZh: string;
-  kind: 'procedure' | 'recommendation';
+  kind: 'procedure' | 'recommendation' | 'administration';
   excerpt: string;
 }
 
@@ -45,6 +57,10 @@ export function scanText(text: string): SafetyHit[] {
   for (const r of PROHIBITED_RECOMMENDATION) {
     const m = r.pattern.exec(text);
     if (m) hits.push({ ruleId: r.id, ruleZh: r.zh, kind: 'recommendation', excerpt: m[0] });
+  }
+  for (const r of ADMINISTRATION_WORDING) {
+    const m = r.pattern.exec(text);
+    if (m) hits.push({ ruleId: r.id, ruleZh: r.zh, kind: 'administration', excerpt: m[0] });
   }
   return hits;
 }

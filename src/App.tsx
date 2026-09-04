@@ -131,6 +131,7 @@ function App() {
         </div>
         {/* 右侧：中/英切换（owner 2026-09-03；主题按钮仍隐藏，SettingsModal 待重新安置） */}
         <button
+          className="app-lang"
           style={{ ...toggleButtonStyle(false), pointerEvents: 'auto', whiteSpace: 'nowrap' }}
           onClick={() => setLang(lang === 'en' ? 'zh' : 'en')}
           title={lang === 'en' ? '切换到中文' : 'Switch to English'}

@@ -90,6 +90,62 @@ function HtmlLabel({ position, color, text }: {
   );
 }
 
+/** 洛书九宫的人体锚点（脚本E 6.4：「9宫映射到人体九宫方位」）。示意位：
+ *  头顶／两肩／两腰／中轴／两腿／脚底，取体前表面；画面左＝人身左，与河图锚点同一约定。 */
+const PALACE_ANCHOR: Record<string, [number, number, number]> = {
+  头顶: [0, 3.15, -2.3],
+  左肩: [-0.78, 2.35, -2.3],
+  右肩: [0.78, 2.35, -2.3],
+  左腰: [-0.6, 0.55, -2.3],
+  中轴: [0, 0.95, -2.25],
+  右腰: [0.6, 0.55, -2.3],
+  左腿: [-0.38, -1.35, -2.3],
+  脚底: [0, -2.85, -2.3],
+  右腿: [0.38, -1.35, -2.3]
+};
+
+/** 人体联动·洛书：每宫 → 人体九宫方位（选中某宫时其余压暗） */
+function LuoshuBodyLinks({ selected }: { selected: LuoshuPalace | null }) {
+  const lines = useMemo(() => {
+    return LUOSHU_PALACES.map((palace) => {
+      const anchor = PALACE_ANCHOR[palace.bodyPart] ?? PALACE_ANCHOR['中轴'];
+      const geometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(palace.position[0], palace.position[1] + 0.3, 0),
+        new THREE.Vector3(...anchor)
+      ]);
+      const material = new THREE.LineDashedMaterial({
+        color: ELEMENT_COLORS[palace.element].three,
+        dashSize: 0.14, gapSize: 0.1, transparent: true, opacity: 0.5
+      });
+      const line = new THREE.Line(geometry, material);
+      line.computeLineDistances();
+      return { palace, anchor, line };
+    });
+  }, []);
+  return (
+    <group>
+      {lines.map(({ palace, anchor, line }) => {
+        const dimmed = selected !== null && selected.number !== palace.number;
+        return (
+          <group key={palace.number}>
+            <primitive object={line} visible={!dimmed} />
+            <mesh position={anchor}>
+              <sphereGeometry args={[0.08, 12, 12]} />
+              <meshBasicMaterial color={ELEMENT_COLORS[palace.element].three}
+                                 transparent opacity={dimmed ? 0.25 : 0.95} depthWrite={false} />
+            </mesh>
+            {!dimmed && (
+              <HtmlLabel position={[anchor[0] + (anchor[0] > 0 ? 0.32 : anchor[0] < 0 ? -0.32 : 0.36), anchor[1], anchor[2]]}
+                         color={ELEMENT_COLORS[palace.element].hex}
+                         text={`${palace.gua}${palace.number}·${palace.bodyPart}`} />
+            )}
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+
 function UnityLinks() {
   const lines = useMemo(() => {
     const out: THREE.Line[] = [];
@@ -163,7 +219,7 @@ export function HetuLuoshu() {
 
         <Starfield />
 
-        {humanSync && mode !== 'luoshu' && (
+        {humanSync && (
           <group position={[0, 0.2, -2.6]}>
             <Suspense fallback={<BodyFigure opacity={0.25} />}>
               <BodyMesh opacity={0.2} />
@@ -173,6 +229,7 @@ export function HetuLuoshu() {
         {humanSync && mode !== 'luoshu' && (
           <BodyLinks mode={mode} layerZ={mode === 'unity' ? 0.7 : layerZ} selected={selectedPair} />
         )}
+        {humanSync && mode === 'luoshu' && <LuoshuBodyLinks selected={selectedPalace} />}
 
         {(mode === 'hetu' || mode === 'unity') && (
           <HetuPairs

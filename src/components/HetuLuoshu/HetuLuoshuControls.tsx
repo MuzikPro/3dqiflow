@@ -60,9 +60,6 @@ export function HetuLuoshuControls(props: Props) {
               onChange={(e) => onLayerZChange(parseFloat(e.target.value))}
               style={{ width: '150px', accentColor: UI.accent }}
             />
-            <button style={toggleButtonStyle(humanSync)} onClick={onHumanSyncToggle}>
-              {tr('人体联动')}
-            </button>
           </>
         )}
         {mode !== 'hetu' && (
@@ -78,6 +75,10 @@ export function HetuLuoshuControls(props: Props) {
             />
           </>
         )}
+        {/* 人体联动：三种视图皆可——河图五组、洛书九宫各有自己的人体锚点 */}
+        <button style={toggleButtonStyle(humanSync)} onClick={onHumanSyncToggle}>
+          {tr('人体联动')}
+        </button>
         <div style={{ fontSize: '11px', color: UI.textMuted, lineHeight: 1.7 }}>
           {mode === 'hetu' && tr('天(奇·阳)在后层实心，地(偶·阴)在前层线框——如脏在里、腑在表。')}
           {mode === 'luoshu' && tr('戴九履一，左三右七。宫位固定，亮度随节气流转。')}

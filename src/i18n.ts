@@ -29,7 +29,7 @@ const STRINGS = {
   sceneAxis: { zh: '轴轮模型', en: 'Axle & Wheel', ja: '軸輪モデル' },
   sceneAcupoint: { zh: '经穴图', en: 'Acupoints', ja: '経穴図' },
   sceneMeridian: { zh: '十二经运行', en: 'Meridian Flow', ja: '十二経運行' },
-  sceneFormula: { zh: '方剂详解', en: 'Formulas 3D', ja: '方剤詳解' },
+  sceneFormula: { zh: '方剂详解', en: 'Formulas', ja: '方剤詳解' },
   sceneSolar: { zh: '节气剧场', en: 'Solar Terms', ja: '節気シアター' },
   sceneHetu: { zh: '河图洛书', en: 'Hetu & Luoshu', ja: '河図洛書' },
   scenePulse: { zh: '脉舌3D', en: 'Pulse & Tongue', ja: '脈舌3D' },

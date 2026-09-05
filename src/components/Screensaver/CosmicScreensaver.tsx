@@ -8,10 +8,11 @@ import { Starfield } from '../AxisWheel/Starfield';
 import { BodyMesh } from '../MeridianTheater/BodyMesh';
 import { BodyFigure } from '../MeridianTheater/BodyFigure';
 import { MeridianLine, QiFlow } from '../three/MeridianSystem';
-import { TWELVE, VESSELS_EIGHT, NO_MIRROR } from '../Acupoints/pointGeometry';
+import { TWELVE, VESSELS_EIGHT, VESSEL_SIX, HAND_SIX, FOOT_SIX, YIN_SIX, YANG_SIX, NO_MIRROR, meridianColor, VESSEL_META } from '../Acupoints/pointGeometry';
+import { MERIDIAN_META } from '@/data/acupoints';
 import { tr } from '@/i18n';
 import {
-  ScreensaverSettings, DEFAULT_SETTINGS, loadSettings, saveSettings,
+  ScreensaverSettings, DEFAULT_SETTINGS, ALL_MERIDIANS, loadSettings, saveSettings,
   OrbitStyle, AxisMode, RotationRange, ViewMode
 } from './screensaverSettings';
 
@@ -25,7 +26,6 @@ import {
  * 单一驱动件（Driver）持有全部逐帧逻辑；临时向量预分配，不在帧内 new。
  */
 
-const ALL_CODES = [...TWELVE, ...VESSELS_EIGHT];
 const BODY_CENTER = new THREE.Vector3(0, 0.15, 0);
 const BASE_RADIUS = 9.5;     // 经穴图默认机位距离
 const SAFE_RADIUS = 5.2;     // 人体（含手足）外接半径的安全裕量，× 体量
@@ -140,15 +140,15 @@ function Driver({ settingsRef, rigRef, manualRef, controlsRef }: {
 }
 
 /** 人体 + 全部经络：同一 rig 组（自转/缩放一起动） */
-function BodyRig({ rigRef, opacity, flowRef }: {
-  rigRef: React.RefObject<THREE.Group>; opacity: number; flowRef: { v: number };
+function BodyRig({ rigRef, opacity, flowRef, visible }: {
+  rigRef: React.RefObject<THREE.Group>; opacity: number; flowRef: { v: number }; visible: string[];
 }) {
   return (
     <group ref={rigRef}>
       <Suspense fallback={<BodyFigure opacity={0.2} />}>
         <BodyMesh variant="atlas" sex="male" opacity={opacity} />
       </Suspense>
-      {ALL_CODES.map((code) => (
+      {visible.map((code) => (
         <group key={code}>
           <MeridianLine code={code} mirrored={false} dim={false} sex="male" radiusScale={1.15} brightness={1.2} />
           <QiFlow code={code} mirrored={false} speed={1} sex="male" size={0.06} speedRef={flowRef} />
@@ -204,6 +204,47 @@ const H = ({ text }: { text: string }) => (
   <div style={{ fontSize: '10px', color: UI.accent, letterSpacing: '2px', marginTop: '6px' }}>{text}</div>
 );
 
+/** 经络选择：快捷集 + 逐条开关（chip 用该经本色，悬停显全名） */
+const VESSEL_SHORT: Record<string, string> = { CHONG: '衝', DAI: '帶', YINQIAO: '陰蹻', YANGQIAO: '陽蹻', YINWEI: '陰維', YANGWEI: '陽維' };
+const fullName = (code: string) =>
+  MERIDIAN_META.find((m) => m.code === code)?.zh ?? VESSEL_META.find((v) => v.code === code)?.zh ?? code;
+const shortName = (code: string) => (VESSEL_SHORT[code] ? tr(VESSEL_SHORT[code]) : code);
+
+function MeridianPicker({ visible, onChange }: { visible: string[]; onChange: (v: string[]) => void }) {
+  const has = new Set(visible);
+  const sets: Array<[string, string[]]> = [
+    [tr('全部'), ALL_MERIDIANS], [tr('十二正经'), TWELVE], [tr('奇经八脉'), VESSELS_EIGHT],
+    [tr('手六经'), HAND_SIX], [tr('足六经'), FOOT_SIX], [tr('阴六经'), YIN_SIX], [tr('阳六经'), YANG_SIX]
+  ];
+  const same = (a: string[]) => a.length === visible.length && a.every((c) => has.has(c));
+  const toggle = (code: string) =>
+    onChange(has.has(code) ? visible.filter((c) => c !== code) : ALL_MERIDIANS.filter((c) => has.has(c) || c === code));
+  const chip = (code: string) => {
+    const on = has.has(code);
+    const color = meridianColor(code);
+    return (
+      <button key={code} title={tr(fullName(code))} onClick={() => toggle(code)}
+              style={{ ...toggleButtonStyle(on), fontSize: '10px', padding: '2px 7px',
+                       borderColor: on ? color : undefined, color: on ? color : undefined,
+                       background: on ? `${color}22` : undefined }}>
+        {shortName(code)}
+      </button>
+    );
+  };
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+        {sets.map(([label, codes]) => (
+          <button key={label} style={{ ...toggleButtonStyle(same(codes)), fontSize: '10px', padding: '2px 8px' }}
+                  onClick={() => onChange(codes)}>{label}</button>
+        ))}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>{TWELVE.map(chip)}</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>{['CV', 'GV', ...VESSEL_SIX].map(chip)}</div>
+    </div>
+  );
+}
+
 function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset }: {
   s: ScreensaverSettings; set: (patch: (d: ScreensaverSettings) => ScreensaverSettings) => void;
   fullscreen: boolean; onFullscreen: () => void; onReset: () => void;
@@ -234,6 +275,9 @@ function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset }: {
         <Choice<number> value={s.flowSpeed} options={speedTiers} onChange={(v) => set((d) => ({ ...d, flowSpeed: v }))} />
         <Slider value={s.flowSpeed} min={0.05} max={1} step={0.01} format={(v) => `${v.toFixed(2)}x`}
           onChange={(v) => set((d) => ({ ...d, flowSpeed: v }))} />
+      </Row>
+      <Row label={tr('显示经络')}>
+        <MeridianPicker visible={s.visible} onChange={(v) => set((d) => ({ ...d, visible: v }))} />
       </Row>
 
       {s.mode === 'cameraOrbit' ? (
@@ -365,7 +409,7 @@ export function CosmicScreensaver({ onExit, returnLabel }: { onExit: () => void;
         <pointLight color={lights.center.color} intensity={lights.center.intensity}
                     distance={lights.center.distance} decay={0} position={[0, 1, 4]} />
         <Starfield />
-        <BodyRig rigRef={rigRef} opacity={settings.bodyOpacity} flowRef={flowRef.current} />
+        <BodyRig rigRef={rigRef} opacity={settings.bodyOpacity} flowRef={flowRef.current} visible={settings.visible} />
         <Driver settingsRef={settingsRef} rigRef={rigRef} manualRef={manualRef} controlsRef={controlsRef} />
         <OrbitControls
           ref={controlsRef as never}

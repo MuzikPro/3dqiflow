@@ -2,6 +2,8 @@
  * 宇宙经络屏保的设置（owner 2026-09-05）：只存用户配置，不存每帧镜头值。
  * 键 3dqiflow:screensaver；缺项按默认补齐，坏值不炸。
  */
+import { TWELVE, VESSELS_EIGHT } from '../Acupoints/pointGeometry';
+
 export type ViewMode = 'cameraOrbit' | 'bodyRotation';
 export type OrbitStyle = 'horizontal' | 'elevated' | 'spherical' | 'free';
 export type AxisMode = 'y' | 'x' | 'z' | 'xyzDrift' | 'custom';
@@ -27,7 +29,11 @@ export interface ScreensaverSettings {
     range: RotationRange;
   };
   manualInteraction: boolean;
+  /** 显示的经络代码（十二正经 + 奇经八脉子集）；空数组＝只留人体 */
+  visible: string[];
 }
+
+export const ALL_MERIDIANS = [...TWELVE, ...VESSELS_EIGHT];
 
 export const DEFAULT_SETTINGS: ScreensaverSettings = {
   mode: 'cameraOrbit',
@@ -36,7 +42,8 @@ export const DEFAULT_SETTINGS: ScreensaverSettings = {
   flowSpeed: 0.1,
   camera: { distance: 1.0, fov: 45, orbitSpeed: 0.1, elevation: 8, inclination: 30, orbitStyle: 'spherical' },
   bodyRotation: { speed: 0.08, axisMode: 'xyzDrift', yaw: 0, pitch: 0, roll: 0, range: 360 },
-  manualInteraction: false
+  manualInteraction: false,
+  visible: ALL_MERIDIANS
 };
 
 const KEY = '3dqiflow:screensaver';
@@ -71,7 +78,10 @@ export function loadSettings(): ScreensaverSettings {
       yaw: num(b.yaw, 0, -180, 180), pitch: num(b.pitch, 0, -90, 90), roll: num(b.roll, 0, -90, 90),
       range: pick(b.range, [360, 180, 90, 45] as const, D.bodyRotation.range)
     },
-    manualInteraction: raw.manualInteraction === true
+    manualInteraction: raw.manualInteraction === true,
+    visible: Array.isArray(raw.visible)
+      ? ALL_MERIDIANS.filter((c) => (raw.visible as unknown[]).includes(c))
+      : ALL_MERIDIANS
   };
 }
 

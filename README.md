@@ -33,6 +33,7 @@ Contributions are held to the same lines — see [CONTRIBUTING.md](CONTRIBUTING.
 - **Axle & Wheel 轴轮模型** — central qi (spleen/stomach) as the axle, liver/heart/lung/kidney as the four wheels, with the ministerial-fire (相火) path, and a 24-solar-term seasonal skin
 - **Hetu & Luoshu 河图洛书** — interactive 3D disks of the model's cosmological source
 - **Pulse & Tongue 脉舌3D** — 3D pulse waveforms and a sculpted tongue with coating zones
+- **Cosmic Meridian Screensaver 屏保** — the translucent body floats in the starfield with all 12 meridians and 8 extraordinary vessels flowing at 0.1x; camera orbit or body rotation, meridian picker, FOV/fullscreen, settings persisted locally
 - **Bilingual UI** — full English / 中文 interface (Japanese partial). Classical content stays in the original Chinese: it is never machine-translated, because inventing an authoritative-looking rendering of a classical medical text is its own kind of fabrication.
 
 ## Data provenance and validation

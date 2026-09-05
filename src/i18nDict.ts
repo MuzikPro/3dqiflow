@@ -621,5 +621,15 @@ export const EN: Record<string, string> = {
   '全屏': 'Fullscreen',
   '退出全屏': 'Exit fullscreen',
   '手动交互': 'Manual interaction',
-  '恢复默认': 'Restore defaults'
+  '恢复默认': 'Restore defaults',
+  '显示经络': 'Visible meridians',
+  '十二正经': '12 meridians',
+  '阴六经': 'Yin six',
+  '阳六经': 'Yang six',
+  '衝': 'Chong',
+  '帶': 'Dai',
+  '陰蹻': 'Yin Qiao',
+  '陽蹻': 'Yang Qiao',
+  '陰維': 'Yin Wei',
+  '陽維': 'Yang Wei'
 };

@@ -7,6 +7,7 @@ import { HetuLuoshu } from './components/HetuLuoshu/HetuLuoshu';
 import { PulseTongue } from './components/PulseTongue/PulseTongue';
 import { AcupointAtlas } from './components/Acupoints/AcupointAtlas';
 import { AboutPage } from './components/About/AboutPage';
+import { CosmicScreensaver } from './components/Screensaver/CosmicScreensaver';
 import { StringKey, t, useLang, setLang } from './i18n';
 import { UI, applyUITheme } from './styles/theme';
 
@@ -17,7 +18,7 @@ try { localStorage.removeItem('yy_theme'); } catch { /* ignore */ }
 import { toggleButtonStyle } from './components/UI/panelStyle';
 
 // owner 2026-08-21 (DELIVERY_MERGE_ENERGY): 节气剧场并入轴轮模型'节气'皮肤, 独立场景下线
-type SceneKey = 'axis' | 'meridian' | 'acupoint' | 'formula' | 'hetu' | 'pulse' | 'reader' | 'about';
+type SceneKey = 'axis' | 'meridian' | 'acupoint' | 'formula' | 'hetu' | 'pulse' | 'reader' | 'screensaver' | 'about';
 
 // owner 2026-08-25：经穴图提为第一项（亦为落地页），轴轮模型移到最后
 const SCENE_LABEL_KEYS: Record<SceneKey, StringKey> = {
@@ -28,6 +29,7 @@ const SCENE_LABEL_KEYS: Record<SceneKey, StringKey> = {
   pulse: 'scenePulse',
   reader: 'sceneReader',
   axis: 'sceneAxis',
+  screensaver: 'sceneScreensaver',
   about: 'sceneAbout'
 };
 
@@ -40,6 +42,8 @@ function App() {
   const [pulseRequest, setPulseRequest] = useState<{ pulse: string; tongue: string } | null>(null);
   // 轴轮模型时辰条 → 经穴图子午流注（记住来路，经穴图上给「← 返回」）
   const [clockRequest, setClockRequest] = useState<{ index: number; from: SceneKey } | null>(null);
+  // 屏保来路：退出屏保回到进入前的页面（owner 2026-09-05）
+  const [screensaverFrom, setScreensaverFrom] = useState<SceneKey>('acupoint');
   // owner 2026-08-20：首次引导弹窗下线——落地页直接进轴轮模型。
   // Onboarding 组件保留在 components/ 未引用（同 SettingsModal，待重新安置）。
   // 语言（中/英切换，owner 2026-09-03 复位入口）；主题恒为暗色（见文件头 owner 决定）
@@ -81,6 +85,9 @@ function App() {
         />
       )}
       {scene === 'about' && <AboutPage />}
+      {scene === 'screensaver' && (
+        <CosmicScreensaver onExit={() => setScene(screensaverFrom)} returnLabel={t(lang, SCENE_LABEL_KEYS[screensaverFrom])} />
+      )}
       {scene === 'formula' && (
         <Formula3D key={formulaRequest ?? 'default'} initialFormulaName={formulaRequest} onOpenArticle={openArticle} />
       )}
@@ -104,8 +111,8 @@ function App() {
         />
       )}
 
-      {/* 全局标题栏 + 场景切换（窄屏：标题缩一号、导航横向滑动，见 index.css） */}
-      <div
+      {/* 全局标题栏 + 场景切换（窄屏：标题缩一号、导航横向滑动，见 index.css）；屏保页自带极淡返回键，标题栏让位 */}
+      {scene !== 'screensaver' && <div
         className="app-header"
         style={{
           position: 'fixed',
@@ -135,7 +142,7 @@ function App() {
               <button
                 key={key}
                 style={toggleButtonStyle(scene === key)}
-                onClick={() => { setClockRequest(null); setScene(key); }}
+                onClick={() => { setClockRequest(null); if (key === 'screensaver') setScreensaverFrom(scene); setScene(key); }}
               >
                 {t(lang, SCENE_LABEL_KEYS[key])}
               </button>
@@ -151,7 +158,7 @@ function App() {
         >
           {lang === 'en' ? '中文' : 'EN'}
         </button>
-      </div>
+      </div>}
 
     </div>
   );

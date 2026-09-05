@@ -34,6 +34,7 @@ const STRINGS = {
   sceneHetu: { zh: '河图洛书', en: 'Hetu & Luoshu', ja: '河図洛書' },
   scenePulse: { zh: '脉舌3D', en: 'Pulse & Tongue', ja: '脈舌3D' },
   sceneReader: { zh: '条文阅读', en: 'Article Reader', ja: '条文リーダー' },
+  sceneScreensaver: { zh: '屏保', en: 'Screensaver', ja: 'スクリーンセーバー' },
   sceneAbout: { zh: '声明', en: 'Notices', ja: '声明' },
   settings: { zh: '设置', en: 'Settings', ja: '設定' },
   language: { zh: '语言 / Language', en: 'Language', ja: '言語' },

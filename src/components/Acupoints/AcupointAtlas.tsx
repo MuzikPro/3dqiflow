@@ -7,79 +7,23 @@ import { BACKGROUND, THREE_DEFAULTS, SCENE_TEXT } from '@/styles/theme';
 import { useNarrow } from '@/hooks/useNarrow';
 import { BodyFigure } from '../MeridianTheater/BodyFigure';
 import { BodyMesh, BodySex } from '../MeridianTheater/BodyMesh';
+import { MeridianLine as SharedMeridianLine, QiFlow as SharedQiFlow } from '../three/MeridianSystem';
 import { CAMERA_VIEWS, CameraViewKey } from '../MeridianTheater/bodyGeometry';
 import { MERIDIAN_CLOCK, currentShichenIndex } from '@/data/meridianClock';
 import { UI, RADIUS } from '@/styles/theme';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
-import { PlacedPoint, TWELVE, EXTRA, VESSEL_SIX, NO_MIRROR, VESSEL_POINTS, Vec3, BodySexKey, meridianColor, meridianPolyline, placedPoints, flowLabel } from './pointGeometry';
+import { PlacedPoint, TWELVE, EXTRA, VESSEL_SIX, NO_MIRROR, VESSEL_POINTS, Vec3, BodySexKey, meridianColor, placedPoints, flowLabel } from './pointGeometry';
 import { AcupointControls } from './AcupointControls';
 
 type OrbitRef = React.ElementRef<typeof OrbitControls>;
 
-/** 一条经的连线（细管，颜色随五行） */
-function MeridianLine({ code, mirrored, dim, sex }:
-  { code: string; mirrored: boolean; dim: boolean; sex: BodySexKey }) {
+/** 经线/气流已抽为共用件（components/three/MeridianSystem）；此处只把
+ *  经穴图的镜头缩放档位喂给管径。 */
+function MeridianLine(props: { code: string; mirrored: boolean; dim: boolean; sex: BodySexKey }) {
   const zs = useContext(ZoomScaleContext).mark;
-  // 奇经贴着侧面轮廓走：正面看恰与体表亮边（rim 光）重叠，0.004 的细管
-  // 会整段淹没在边光里（owner 2026-08-26 报「阳跷正面丢失」的真因——
-  // 线在、几何对，只是被边光盖了）。奇经加粗提亮，压得住边光。
-  const vessel = VESSEL_SIX.includes(code);
-  const geo = useMemo(() => {
-    const pts = meridianPolyline(code, mirrored, sex);
-    if (pts.length < 2) return null;
-    const curve = new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(...p)), false, 'catmullrom', 0.2);
-    return new THREE.TubeGeometry(curve, Math.max(48, pts.length * 6), 0.0040 * zs * (vessel ? 2.6 : 1), 6, false);
-  }, [code, mirrored, zs, sex, vessel]);
-  if (!geo) return null;
-  const c = meridianColor(code);
-  return (
-    // renderOrder=2：透明排序可能让体表（含亮边）后画，把贴边的线冲淡——
-    // 线永远最后画，边光盖不掉它
-    <mesh geometry={geo} renderOrder={2}>
-      <meshBasicMaterial color={c} transparent opacity={dim ? 0.12 : vessel ? 0.95 : 0.75} depthWrite={false} />
-    </mesh>
-  );
+  return <SharedMeridianLine {...props} radiusScale={zs} />;
 }
-
-/**
- * 气机流动：沿穴序推进的光点。穴序即经气方向（见 pointGeometry.flowLabel），
- * 所以只需按 t 递增取点，肺经自然呈"由胸走手"。
- */
-const QI_PER_LINE = 7;
-function QiFlow({ code, mirrored, speed, sex }:
-  { code: string; mirrored: boolean; speed: number; sex: BodySexKey }) {
-  const ref = useRef<THREE.Points>(null);
-  const phase = useRef((code.charCodeAt(0) * 0.37 + code.charCodeAt(1) * 0.11) % 1);
-  const curve = useMemo(() => {
-    const pts = meridianPolyline(code, mirrored, sex);
-    if (pts.length < 2) return null;
-    return new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(...p)), false, 'catmullrom', 0.2);
-  }, [code, mirrored, sex]);
-  const buf = useMemo(() => new Float32Array(QI_PER_LINE * 3), []);
-  const scratch = useMemo(() => new THREE.Vector3(), []);
-
-  useFrame((_, delta) => {
-    if (!curve || !ref.current) return;
-    phase.current = (phase.current + Math.min(delta, 0.1) * 0.09 * speed) % 1;
-    const arr = ref.current.geometry.attributes.position.array as Float32Array;
-    for (let i = 0; i < QI_PER_LINE; i++) {
-      curve.getPoint((phase.current + i / QI_PER_LINE) % 1, scratch);
-      arr[i * 3] = scratch.x; arr[i * 3 + 1] = scratch.y; arr[i * 3 + 2] = scratch.z;
-    }
-    ref.current.geometry.attributes.position.needsUpdate = true;
-  });
-
-  if (!curve) return null;
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[buf, 3]} />
-      </bufferGeometry>
-      <pointsMaterial color={meridianColor(code)} size={0.055} transparent opacity={0.95}
-                      blending={THREE.AdditiveBlending} sizeAttenuation depthWrite={false} />
-    </points>
-  );
-}
+const QiFlow = SharedQiFlow;
 
 /**
  * 穴点与经络线随镜头缩放（owner 2026-08-23）。

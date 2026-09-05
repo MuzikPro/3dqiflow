@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AxisWheel } from './components/AxisWheel/AxisWheel';
 import { MeridianTheater } from './components/MeridianTheater/MeridianTheater';
 import { Formula3D } from './components/Formula3D/Formula3D';
@@ -44,6 +44,17 @@ function App() {
   const [clockRequest, setClockRequest] = useState<{ index: number; from: SceneKey } | null>(null);
   // 屏保来路：退出屏保回到进入前的页面（owner 2026-09-05）
   const [screensaverFrom, setScreensaverFrom] = useState<SceneKey>('acupoint');
+  // 标题栏实高 → CSS 变量：窄屏导航折行时侧栏顶边跟着下移（index.css ≤1024 块）
+  const headerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const apply = () => document.documentElement.style.setProperty('--app-header-h', `${Math.round(el.getBoundingClientRect().height) + 11}px`);
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [scene]);
   // owner 2026-08-20：首次引导弹窗下线——落地页直接进轴轮模型。
   // Onboarding 组件保留在 components/ 未引用（同 SettingsModal，待重新安置）。
   // 语言（中/英切换，owner 2026-09-03 复位入口）；主题恒为暗色（见文件头 owner 决定）
@@ -113,6 +124,7 @@ function App() {
 
       {/* 全局标题栏 + 场景切换（窄屏：标题缩一号、导航横向滑动，见 index.css）；屏保页自带极淡返回键，标题栏让位 */}
       {scene !== 'screensaver' && <div
+        ref={headerRef}
         className="app-header"
         style={{
           position: 'fixed',

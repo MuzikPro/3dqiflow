@@ -101,15 +101,13 @@ html:not([data-lang="zh"]) .panel-right { min-width: 262px; }
   .app-subtitle {
     display: none !important;
   }
+  /* iPad 竖屏（701–1024）：九个英文菜单项一行放不下，横滚又无提示——测试者
+     反馈「菜单看不见」（owner 2026-09-05）。改为折成两行；侧栏顶边随标题栏
+     实高下移（--app-header-h 由 App 用 ResizeObserver 写入）。 */
   .app-nav {
     width: 100% !important;
-    overflow-x: auto !important;
-    flex-wrap: nowrap !important;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .app-nav::-webkit-scrollbar {
-    display: none;
+    flex-wrap: wrap !important;
+    row-gap: 6px !important;
   }
   .app-nav button {
     flex-shrink: 0;
@@ -128,14 +126,14 @@ html:not([data-lang="zh"]) .panel-right { min-width: 262px; }
   .panel-left, .panel-right { min-width: 0 !important; }
   .panel-left {
     left: 8px !important;
-    top: 76px !important;
+    top: var(--app-header-h, 76px) !important;
     max-width: min(46vw, 260px) !important;
     max-height: 46vh !important;
     overflow-y: auto !important;
   }
   .panel-right {
     right: 8px !important;
-    top: 76px !important;
+    top: var(--app-header-h, 76px) !important;
     max-width: min(48vw, 260px) !important;
     max-height: 46vh !important;
     overflow-y: auto !important;
@@ -143,7 +141,7 @@ html:not([data-lang="zh"]) .panel-right { min-width: 262px; }
   .panel-pop {
     left: auto !important;
     right: 8px !important;
-    top: 76px !important;
+    top: var(--app-header-h, 76px) !important;
     width: min(82vw, 300px) !important;
     max-height: 58vh !important;
     overflow-y: auto !important;
@@ -180,17 +178,17 @@ html:not([data-lang="zh"]) .panel-right { min-width: 262px; }
   /* 条文阅读三栏收窄 */
   .reader-list {
     left: 8px !important;
-    top: 76px !important;
+    top: var(--app-header-h, 76px) !important;
     width: 190px !important;
   }
   .reader-stream {
     left: 206px !important;
     right: 302px !important;
-    top: 76px !important;
+    top: var(--app-header-h, 76px) !important;
   }
   .reader-right {
     right: 8px !important;
-    top: 76px !important;
+    top: var(--app-header-h, 76px) !important;
     width: 286px !important;
   }
   .reader-progress {
@@ -209,6 +207,17 @@ html:not([data-lang="zh"]) .panel-right { min-width: 262px; }
 
 /* 手机（iPhone 竖横屏） */
 @media (max-width: 700px) {
+  /* 手机：两行会吃掉太多画面，仍横滚；右缘渐隐提示「还有」 */
+  .app-nav {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent);
+    padding-right: 32px;
+  }
+  .app-nav::-webkit-scrollbar { display: none; }
   .panel-left {
     max-width: min(53vw, 230px) !important;
     max-height: 40vh !important;

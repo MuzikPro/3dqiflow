@@ -175,7 +175,7 @@ function CameraRig({ view, narrow }: { view: AtlasViewKey; narrow: boolean }) {
 }
 
 /** 子午流注：MERIDIAN_CLOCK 各时辰对应的本页经络码（子胆丑肝…顺序对齐） */
-const CLOCK_CODE = ['GB', 'LR', 'LU', 'LI', 'ST', 'SP', 'HT', 'SI', 'BL', 'KI', 'PC', 'TE'];
+const CLOCK_CODE = MERIDIAN_CLOCK.map((e) => e.code);
 
 /** 搜索定位请求：穴位→镜头推近该穴（连带周边参照）；经/脉→独显整条并回全身位 */
 type FocusReq = { kind: 'point'; at: Vec3; n: number } | { kind: 'fit'; n: number };

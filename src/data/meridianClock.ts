@@ -11,30 +11,78 @@
  */
 import { SOLAR_TERMS } from './solarTerms';
 
+/** 五行（五音归类用：心/小肠与心包/三焦同属火，见 ministerFire） */
+export type FiveElement = 'wood' | 'fire' | 'earth' | 'metal' | 'water';
+/** 五音：宫商角徵羽——相对的调式功能，不是固定的西方音高 */
+export type FiveTone = 'gong' | 'shang' | 'jue' | 'zhi' | 'yu';
+export type Polarity = 'yin' | 'yang';
+
 export interface ShichenEntry {
   shichen: string;   // 时辰名
+  pinyin: string;    // 地支拼音（Zi…Hai）
   hours: string;     // 现代钟点区间
   startHour: number; // 区间起点（24h 制；子时=23）
   organ: string;     // 对应脏腑（ORGANS.name）
   meridian: string;  // 对应经络（MERIDIAN_FLOW.name）
   meridianFull: string;
   note: string;      // 一句当令提示（经典通说）
+  /** 经络码（与 pointGeometry.TWELVE / acupoints.MERIDIAN_META 同一套） */
+  code: string;
+  /** 五行归类（《素问》五音配五脏：宫土脾 商金肺 角木肝 徵火心 羽水肾；腑随其表里之脏） */
+  element: FiveElement;
+  tone: FiveTone;
+  polarity: Polarity;
+  /** 相火（心包/三焦）：五音同属徵，配色与音色另作区分 */
+  ministerFire: boolean;
 }
 
 export const MERIDIAN_CLOCK: ShichenEntry[] = [
-  { shichen: '子', hours: '23–01', startHour: 23, organ: '胆', meridian: '胆经', meridianFull: '足少阳胆经', note: '一阳初生，胆气生发' },
-  { shichen: '丑', hours: '01–03', startHour: 1, organ: '肝', meridian: '肝经', meridianFull: '足厥阴肝经', note: '肝藏血，血归于肝' },
-  { shichen: '寅', hours: '03–05', startHour: 3, organ: '肺', meridian: '肺经', meridianFull: '手太阴肺经', note: '气血注肺，肺朝百脉' },
-  { shichen: '卯', hours: '05–07', startHour: 5, organ: '大肠', meridian: '大肠经', meridianFull: '手阳明大肠经', note: '大肠传导，排浊之时' },
-  { shichen: '辰', hours: '07–09', startHour: 7, organ: '胃', meridian: '胃经', meridianFull: '足阳明胃经', note: '胃受纳，宜进早餐' },
-  { shichen: '巳', hours: '09–11', startHour: 9, organ: '脾', meridian: '脾经', meridianFull: '足太阴脾经', note: '脾主运化，中轴最旺' },
-  { shichen: '午', hours: '11–13', startHour: 11, organ: '心', meridian: '心经', meridianFull: '手少阴心经', note: '心气宣通，阳气之极' },
-  { shichen: '未', hours: '13–15', startHour: 13, organ: '小肠', meridian: '小肠经', meridianFull: '手太阳小肠经', note: '小肠泌别清浊' },
-  { shichen: '申', hours: '15–17', startHour: 15, organ: '膀胱', meridian: '膀胱经', meridianFull: '足太阳膀胱经', note: '膀胱气化行水' },
-  { shichen: '酉', hours: '17–19', startHour: 17, organ: '肾', meridian: '肾经', meridianFull: '足少阴肾经', note: '肾藏精，封藏之本' },
-  { shichen: '戌', hours: '19–21', startHour: 19, organ: '心包', meridian: '心包经', meridianFull: '手厥阴心包经', note: '心包护心，相火下行' },
-  { shichen: '亥', hours: '21–23', startHour: 21, organ: '三焦', meridian: '三焦经', meridianFull: '手少阳三焦经', note: '三焦通调，百脉归息' }
+  { shichen: '子', pinyin: 'Zi', hours: '23–01', startHour: 23, organ: '胆', meridian: '胆经', meridianFull: '足少阳胆经', note: '一阳初生，胆气生发',
+    code: 'GB', element: 'wood', tone: 'jue', polarity: 'yang', ministerFire: false },
+  { shichen: '丑', pinyin: 'Chou', hours: '01–03', startHour: 1, organ: '肝', meridian: '肝经', meridianFull: '足厥阴肝经', note: '肝藏血，血归于肝',
+    code: 'LR', element: 'wood', tone: 'jue', polarity: 'yin', ministerFire: false },
+  { shichen: '寅', pinyin: 'Yin', hours: '03–05', startHour: 3, organ: '肺', meridian: '肺经', meridianFull: '手太阴肺经', note: '气血注肺，肺朝百脉',
+    code: 'LU', element: 'metal', tone: 'shang', polarity: 'yin', ministerFire: false },
+  { shichen: '卯', pinyin: 'Mao', hours: '05–07', startHour: 5, organ: '大肠', meridian: '大肠经', meridianFull: '手阳明大肠经', note: '大肠传导，排浊之时',
+    code: 'LI', element: 'metal', tone: 'shang', polarity: 'yang', ministerFire: false },
+  { shichen: '辰', pinyin: 'Chen', hours: '07–09', startHour: 7, organ: '胃', meridian: '胃经', meridianFull: '足阳明胃经', note: '胃受纳，宜进早餐',
+    code: 'ST', element: 'earth', tone: 'gong', polarity: 'yang', ministerFire: false },
+  { shichen: '巳', pinyin: 'Si', hours: '09–11', startHour: 9, organ: '脾', meridian: '脾经', meridianFull: '足太阴脾经', note: '脾主运化，中轴最旺',
+    code: 'SP', element: 'earth', tone: 'gong', polarity: 'yin', ministerFire: false },
+  { shichen: '午', pinyin: 'Wu', hours: '11–13', startHour: 11, organ: '心', meridian: '心经', meridianFull: '手少阴心经', note: '心气宣通，阳气之极',
+    code: 'HT', element: 'fire', tone: 'zhi', polarity: 'yin', ministerFire: false },
+  { shichen: '未', pinyin: 'Wei', hours: '13–15', startHour: 13, organ: '小肠', meridian: '小肠经', meridianFull: '手太阳小肠经', note: '小肠泌别清浊',
+    code: 'SI', element: 'fire', tone: 'zhi', polarity: 'yang', ministerFire: false },
+  { shichen: '申', pinyin: 'Shen', hours: '15–17', startHour: 15, organ: '膀胱', meridian: '膀胱经', meridianFull: '足太阳膀胱经', note: '膀胱气化行水',
+    code: 'BL', element: 'water', tone: 'yu', polarity: 'yang', ministerFire: false },
+  { shichen: '酉', pinyin: 'You', hours: '17–19', startHour: 17, organ: '肾', meridian: '肾经', meridianFull: '足少阴肾经', note: '肾藏精，封藏之本',
+    code: 'KI', element: 'water', tone: 'yu', polarity: 'yin', ministerFire: false },
+  { shichen: '戌', pinyin: 'Xu', hours: '19–21', startHour: 19, organ: '心包', meridian: '心包经', meridianFull: '手厥阴心包经', note: '心包护心，相火下行',
+    code: 'PC', element: 'fire', tone: 'zhi', polarity: 'yin', ministerFire: true },
+  { shichen: '亥', pinyin: 'Hai', hours: '21–23', startHour: 21, organ: '三焦', meridian: '三焦经', meridianFull: '手少阳三焦经', note: '三焦通调，百脉归息',
+    code: 'TE', element: 'fire', tone: 'zhi', polarity: 'yang', ministerFire: true }
 ];
+
+/** 五音表：宫商角徵羽 → 五行 → 所属经络码。相对调式功能，整体可移调；不写死"宫=D"之类的绝对音高。 */
+export const FIVE_TONES: Record<FiveTone, { zh: string; pinyin: string; element: FiveElement; codes: string[] }> = {
+  gong:  { zh: '宫', pinyin: 'Gong',  element: 'earth', codes: ['ST', 'SP'] },
+  shang: { zh: '商', pinyin: 'Shang', element: 'metal', codes: ['LU', 'LI'] },
+  jue:   { zh: '角', pinyin: 'Jue',   element: 'wood',  codes: ['GB', 'LR'] },
+  zhi:   { zh: '徵', pinyin: 'Zhi',   element: 'fire',  codes: ['HT', 'SI', 'PC', 'TE'] },
+  yu:    { zh: '羽', pinyin: 'Yu',    element: 'water', codes: ['BL', 'KI'] }
+};
+
+/** 表里配对（同一五行、钟面相邻的一升一降） */
+export const MERIDIAN_PAIRS: ReadonlyArray<readonly [string, string]> = [
+  ['LU', 'LI'], ['ST', 'SP'], ['HT', 'SI'], ['BL', 'KI'], ['PC', 'TE'], ['GB', 'LR']
+];
+export function partnerOf(code: string): string | null {
+  for (const [a, b] of MERIDIAN_PAIRS) { if (a === code) return b; if (b === code) return a; }
+  return null;
+}
+export function clockEntryForCode(code: string): ShichenEntry | undefined {
+  return MERIDIAN_CLOCK.find((e) => e.code === code);
+}
 
 /** 当前时辰索引（子时跨 23:00–01:00） */
 export function currentShichenIndex(date: Date = new Date()): number {

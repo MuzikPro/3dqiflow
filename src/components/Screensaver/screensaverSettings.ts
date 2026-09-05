@@ -43,7 +43,7 @@ export const DEFAULT_SETTINGS: ScreensaverSettings = {
   camera: { distance: 1.0, fov: 45, orbitSpeed: 0.1, elevation: 8, inclination: 30, orbitStyle: 'spherical' },
   bodyRotation: { speed: 0.25, axisMode: 'xyzDrift', yaw: 0, pitch: 0, roll: 0, range: 360 },
   manualInteraction: false,
-  visible: ALL_MERIDIANS
+  visible: TWELVE   // 默认只显十二正经；奇经八脉在设置里勾选
 };
 
 const KEY = '3dqiflow:screensaver';

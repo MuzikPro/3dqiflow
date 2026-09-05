@@ -358,7 +358,8 @@ function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset, lang }: {
 
 /* ───────────────── 页面 ───────────────── */
 
-export function CosmicScreensaver({ onExit, returnLabel }: { onExit: () => void; returnLabel: string }) {
+/** onExit 缺省＝独立站（无来路页）：不画返回键 */
+export function CosmicScreensaver({ onExit, returnLabel }: { onExit?: () => void; returnLabel?: string }) {
   const lang = useLang();
   const [settings, setSettings] = useState<ScreensaverSettings>(loadSettings);
   const settingsRef = useRef(settings);
@@ -441,12 +442,12 @@ export function CosmicScreensaver({ onExit, returnLabel }: { onExit: () => void;
       </Canvas>
 
       {/* 返回（左上，极淡；悬停变亮） */}
-      <button style={{ ...chip(showUi), left: '18px', top: '16px' }}
+      {onExit && <button style={{ ...chip(showUi), left: '18px', top: '16px' }}
               onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = showUi ? '0.28' : '0')}
               onClick={onExit} title={`${tr('返回')} ${returnLabel}`}>
         ↩ 3DQiFlow · {returnLabel}
-      </button>
+      </button>}
 
       {/* 设置 / 全屏（右下，极淡） */}
       <div style={{ position: 'fixed', right: '18px', bottom: '16px', zIndex: 125, display: 'flex', gap: '6px',

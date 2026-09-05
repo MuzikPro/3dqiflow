@@ -221,8 +221,9 @@ export function HetuLuoshu() {
 
         {humanSync && (
           <group position={[0, 0.2, -2.6]}>
+            {/* 洛书九宫立方体挡在人体前，人体略提亮才读得出是个身子 */}
             <Suspense fallback={<BodyFigure opacity={0.25} />}>
-              <BodyMesh opacity={0.2} />
+              <BodyMesh opacity={mode === 'luoshu' ? 0.38 : 0.2} />
             </Suspense>
           </group>
         )}

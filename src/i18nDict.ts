@@ -386,6 +386,8 @@ export const EN: Record<string, string> = {
   '帶脈': 'Belt Vessel (Dai Mai)',
   '陰蹻脈': 'Yin Heel Vessel',
   '陽蹺脈': 'Yang Heel Vessel',
+  '陽蹻脈': 'Yang Heel Vessel',
+  '陰蹺脈': 'Yin Heel Vessel',
   '陰維脈': 'Yin Link Vessel',
   '陽維脈': 'Yang Link Vessel',
   '沿前正中线上行': 'Ascends along the anterior midline',

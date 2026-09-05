@@ -81,7 +81,7 @@ export function loadSettings(): ScreensaverSettings {
     manualInteraction: raw.manualInteraction === true,
     visible: Array.isArray(raw.visible)
       ? ALL_MERIDIANS.filter((c) => (raw.visible as unknown[]).includes(c))
-      : ALL_MERIDIANS
+      : D.visible
   };
 }
 

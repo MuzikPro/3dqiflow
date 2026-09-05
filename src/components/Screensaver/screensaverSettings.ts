@@ -41,7 +41,7 @@ export const DEFAULT_SETTINGS: ScreensaverSettings = {
   bodyOpacity: 0.16,
   flowSpeed: 0.1,
   camera: { distance: 1.0, fov: 45, orbitSpeed: 0.1, elevation: 8, inclination: 30, orbitStyle: 'spherical' },
-  bodyRotation: { speed: 0.08, axisMode: 'xyzDrift', yaw: 0, pitch: 0, roll: 0, range: 360 },
+  bodyRotation: { speed: 0.25, axisMode: 'xyzDrift', yaw: 0, pitch: 0, roll: 0, range: 360 },
   manualInteraction: false,
   visible: ALL_MERIDIANS
 };

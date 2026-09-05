@@ -4,6 +4,8 @@
 
 🌐 **Live demo: [3dqiflow.com](https://3dqiflow.com)** · mirror: [3dqiflow.vercel.app](https://3dqiflow.vercel.app) — the interface is in English by default; a 中文 toggle sits in the top-right.
 
+🌌 **Ambient spin-off: [cosmic.3dqiflow.com](https://cosmic.3dqiflow.com)** — the *Cosmic / 天人* page as a standalone full-screen site ([MuzikPro/cosmic](https://github.com/MuzikPro/cosmic)); same engine, one page, no menus.
+
 ![3DQiFlow demo — axis-wheel model, 12-meridian flow, formula explorer](docs/demo.gif)
 
 3DQiFlow lets you **see** the qi-circulation model described in Peng Ziyi's *The Round-Motion TCM* (圆运动的古中医学, 1920s) and Zhang Zhongjing's *Shanghan Lun* (伤寒论) — instead of only reading about it. Rotate the axis-wheel model, watch the 12 meridians flow simultaneously as paired ascending/descending circles over an anatomical body, decompose classical formulas into 3D herb spheres, and walk the 24 solar terms around a seasonal ring.

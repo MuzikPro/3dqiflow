@@ -65,6 +65,11 @@ The full annotated datasets (96 articles, 39 formulas, etc.) are maintained sepa
 
 ## Workflow
 
+Run `npm run check:i18n` after changing UI strings. It reports literal `tr()`
+calls missing from the English dictionary with their file and line number;
+dynamic calls are skipped. Run the checker's tests with
+`node --test scripts/check-i18n.test.mjs`.
+
 1. Fork, branch from `main`
 2. `npm install && npm run dev`
 3. Before pushing: `npm run typecheck && npm run build`

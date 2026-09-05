@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "check:i18n": "node scripts/check-i18n.mjs",
     "dev": "vite",
     "prebuild": "node scripts/fetch-content-pack.mjs",
     "build": "tsc --noEmit && vite build",

@@ -30,11 +30,25 @@ interface Props {
   visibleIds: ReadonlySet<number>;
   onToggleVisible: (id: number) => void;
   onShowGroup: (filter: 'all' | 'ascend' | 'descend' | 'yin' | 'yang' | 'hand' | 'foot') => void;
+  /** 体表男/女（女体走线=男体教学线贴她体表＋她本人指趾端，属示意） */
+  sex: 'male' | 'female';
+  onSexChange: (s: 'male' | 'female') => void;
   // 解剖体/示意体切换已退场：owner 2026-08-25 决定五场景统一用 NIH 男体
-  /** 脏腑位：解剖实测位 / 圆运动教学位（owner 2026-08-22） */
-  anatomicalNodes: boolean;
-  onAnatomicalNodesToggle: () => void;
+  /** 脏腑位三态：解剖实测位 / 圆运动教学位 / 循行口诀图（owner 2026-09-05） */
+  layout: TheaterLayout;
+  onLayoutChange: (layout: TheaterLayout) => void;
 }
+
+export type TheaterLayout = 'anatomical' | 'teaching' | 'mnemonic';
+/** 脏腑位三态：键/签/悬停说明/面板下注 */
+const LAYOUTS: Array<{ key: TheaterLayout; label: string; title: string; note: string }> = [
+  { key: 'anatomical', label: '解剖位', title: 'NIH Visible Human 实测形心',
+    note: '肝胆在右、肾在下肋——解剖真实位，与左升右降的示意布局不同' },
+  { key: 'teaching', label: '教学位', title: '圆运动左升右降示意位（肝生于左）',
+    note: '肝生于左等圆运动示意布局，非解剖真实位' },
+  { key: 'mnemonic', label: '口诀位', title: '循行口诀图：举手站立·阴升阳降，四束蝶翼如环无端',
+    note: '整幅循行口诀图：手三阴胸走手、手三阳手走头、足三阳头走足、足三阴足走腹' }
+];
 
 const VIEW_LABELS: Record<CameraViewKey, string> = { front: '前视', back: '背视', side: '侧视', top: '俯视' };
 
@@ -42,8 +56,8 @@ export function TheaterControls(props: Props) {
   const {
     view, onViewChange, onResetView, dragMode, onDragModeChange, activeId, onPickMeridian, selected, selectedOrgan, onCloseCard,
     speed, onSpeedChange, seeThrough, onSeeThroughToggle,
-    visibleIds, onToggleVisible, onShowGroup,
-    anatomicalNodes, onAnatomicalNodesToggle
+    visibleIds, onToggleVisible, onShowGroup, sex, onSexChange,
+    layout, onLayoutChange
   } = props;
 
   const card = selected ?? null;
@@ -63,13 +77,13 @@ export function TheaterControls(props: Props) {
             style={{ ...toggleButtonStyle(openPanel === 'left'), pointerEvents: 'auto' }}
             onClick={() => setOpenPanel((v) => (v === 'left' ? 'none' : 'left'))}
           >
-            {(openPanel === 'left' ? '× ' : '⚙ ') + tr('视角设置')}
+            {openPanel === 'left' ? `× ${tr('视角设置')}` : `⚙ ${tr('视角设置')}`}
           </button>
           <button
             style={{ ...toggleButtonStyle(openPanel === 'right'), pointerEvents: 'auto' }}
             onClick={() => setOpenPanel((v) => (v === 'right' ? 'none' : 'right'))}
           >
-            {(openPanel === 'right' ? '× ' : '☰ ') + tr('十二经')}
+            {openPanel === 'right' ? `× ${tr('十二经')}` : `☰ ${tr('十二经')}`}
           </button>
         </div>
       )}
@@ -134,30 +148,31 @@ export function TheaterControls(props: Props) {
         </div>
         <div style={{ fontSize: '11px', color: UI.textMuted, marginTop: '4px' }}>{tr('脏腑位')}</div>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          <button
-            style={toggleButtonStyle(anatomicalNodes)}
-            onClick={() => anatomicalNodes || onAnatomicalNodesToggle()}
-            title={tr('NIH Visible Human 实测形心')}
-          >
-            {tr('解剖位')}
-          </button>
-          <button
-            style={toggleButtonStyle(!anatomicalNodes)}
-            onClick={() => anatomicalNodes && onAnatomicalNodesToggle()}
-            title={tr('圆运动左升右降示意位（肝生于左）')}
-          >
-            {tr('教学位')}
-          </button>
+          {LAYOUTS.map((l) => (
+            <button key={l.key} style={toggleButtonStyle(layout === l.key)}
+                    onClick={() => onLayoutChange(l.key)} title={tr(l.title)}>
+              {tr(l.label)}
+            </button>
+          ))}
         </div>
         <div style={{ fontSize: '9px', color: UI.textFaint, lineHeight: 1.5 }}>
-          {anatomicalNodes
-            ? tr('肝胆在右、肾在下肋——解剖真实位，与左升右降的示意布局不同')
-            : tr('肝生于左等圆运动示意布局，非解剖真实位')}
+          {tr(LAYOUTS.find((l) => l.key === layout)!.note)}
         </div>
         <div style={{ fontSize: '11px', color: UI.textMuted, marginTop: '4px' }}>{tr('升降口诀')}</div>
         <div style={{ fontSize: '12px', lineHeight: 1.7 }}>
           <div style={{ color: COLORS.metal.primary }}>{tr(MNEMONIC.descend)}</div>
           <div style={{ color: COLORS.wood.primary }}>{tr(MNEMONIC.ascend)}</div>
+        </div>
+        <div style={{ fontSize: '11px', color: UI.textMuted, marginTop: '4px' }}>{tr('体表')}</div>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button style={toggleButtonStyle(sex === 'male')} onClick={() => onSexChange('male')}
+                  title={tr('Visible Human 男性体表；教学走线按此体表贴合')}>
+            {tr('男体')}
+          </button>
+          <button style={toggleButtonStyle(sex === 'female')} onClick={() => onSexChange('female')}
+                  title={tr('女体走线＝男体教学线贴回她的体表，指趾端取她本人推导位；属教学示意')}>
+            {tr('女体')}
+          </button>
         </div>
         {/* CC BY 4.0 署名：短句随屏，全文与核对记录在「声明」页与 public/models/README.md */}
         <div style={{ fontSize: '9px', color: UI.textFaint, lineHeight: 1.5, marginTop: '2px' }}>
@@ -227,8 +242,8 @@ export function TheaterControls(props: Props) {
               {/* 显隐勾选（不触发选中） */}
               <button
                 onClick={() => onToggleVisible(m.id)}
-                title={tr(isVisible ? '隐藏此经' : '显示此经')}
-                aria-label={`${tr(m.name)} ${tr('显隐')}`}
+                title={isVisible ? tr('隐藏此经') : tr('显示此经')}
+                aria-label={`${m.name}${tr('显隐')}`}
                 style={{
                   width: '18px', height: '18px', flexShrink: 0, cursor: 'pointer',
                   background: 'transparent', border: `1px solid ${isVisible ? m.colorHex : UI.panelBorder}`,
@@ -255,7 +270,7 @@ export function TheaterControls(props: Props) {
                 />
                 {tr(m.name)}
                 <span style={{ marginLeft: 'auto', fontSize: '11px' }}>
-                  {tr(m.direction === 'ascend' ? '↑升' : '↓降')}
+                  {m.direction === 'ascend' ? tr('↑升') : tr('↓降')}
                 </span>
               </button>
             </div>
@@ -276,21 +291,21 @@ export function TheaterControls(props: Props) {
           }}
         >
           <CloseButton onClose={onCloseCard} />
-          <div style={{ fontSize: '16px', fontWeight: 'bold', color: card.colorHex }}>{tr(card.name)}</div>
+          <div style={{ fontSize: '16px', fontWeight: 'bold', color: card.colorHex }}>{card.name}</div>
           <div style={{ fontSize: '12px', color: UI.textMuted, margin: '6px 0 10px' }}>
-            {tr(card.path)} · {tr(card.direction === 'ascend' ? '↑ 升（左路）' : '↓ 降（右路）')} ·{' '}
-            {tr(card.yin ? '阴经（脏）' : '阳经（腑）')}
+            {tr(card.path)} · {card.direction === 'ascend' ? tr('↑ 升（左路）') : tr('↓ 降（右路）')} ·{' '}
+            {card.yin ? tr('阴经（脏）') : tr('阳经（腑）')}
           </div>
           <div style={{ fontSize: '12px', lineHeight: 1.8, color: UI.textPrimary }}>
             <strong style={{ color: UI.accent }}>{tr('升降失常：')}</strong>
-            {card.symptomsIfAbnormal.map((s) => tr(s)).join(tr('、'))}
+            {card.symptomsIfAbnormal.map((x) => tr(x)).join(tr('、'))}
           </div>
           {(() => {
             const refs = ARTICLES.filter((a) => a.relatedMeridians.includes(card.name));
             return refs.length > 0 ? (
               <div style={{ fontSize: '11px', color: UI.textSecondary, lineHeight: 1.8, marginTop: '6px' }}>
                 <strong style={{ color: UI.accent }}>{tr('对应条文：')}</strong>
-                {refs.map((a) => tr(articleLabel(a))).join(tr('、'))}{tr('（见"条文阅读"）')}
+                {refs.map((a) => articleLabel(a)).join(tr('、'))}{tr('（见"条文阅读"）')}
               </div>
             ) : null;
           })()}
@@ -345,7 +360,7 @@ function CloseButton({ onClose }: { onClose: () => void }) {
 function Disclaimer() {
   return (
     <div style={{ marginTop: '12px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.6 }}>
-      {tr(getAcademicDisclaimer())}·{tr('仅供学习，非医疗建议')}
+      {tr(getAcademicDisclaimer())}{tr('·仅供学习，非医疗建议')}
     </div>
   );
 }

@@ -170,6 +170,23 @@ export const FLOW_SEGMENTS: FlowSegment[] = [
     via: [[-0.15, 1.75, 0.42]] }                                                                // 肝经·躯干段：腹→胸短弧
 ];
 
+import { FEMALE_SEGMENT_POINTS } from './flowViaFemale';
+
+export type TheaterSex = 'male' | 'female';
+
+/** 按体别取分段：女体换上生成表（男线贴她体表＋她本人指趾端），男体原表 */
+export function flowSegmentsFor(sex: TheaterSex): FlowSegment[] {
+  if (sex !== 'female') return FLOW_SEGMENTS;
+  return FLOW_SEGMENTS.map((seg) => {
+    const o = FEMALE_SEGMENT_POINTS[`${seg.id}|${seg.part ?? ''}`];
+    if (!o) return seg;
+    const out: FlowSegment = { ...seg, via: o.via };
+    if (o.fromPoint) out.fromPoint = o.fromPoint;
+    if (o.toPoint) out.toPoint = o.toPoint;
+    return out;
+  });
+}
+
 export interface FlowPath {
   id: number;
   part: string;
@@ -198,8 +215,8 @@ function buildCurve(segment: FlowSegment, mirror: boolean, nodes: OrganNodeMap):
 }
 
 /** 按给定脏腑位置表构建流注环（脏腑位可切换，故为函数而非常量） */
-export function buildFlowPaths(nodes: OrganNodeMap): FlowPath[] {
-  return FLOW_SEGMENTS.flatMap((segment) => {
+export function buildFlowPaths(nodes: OrganNodeMap, segments: FlowSegment[] = FLOW_SEGMENTS): FlowPath[] {
+  return segments.flatMap((segment) => {
     const base: FlowPath = {
       id: segment.id,
       part: segment.part ?? 'main',

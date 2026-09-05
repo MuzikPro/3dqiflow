@@ -9,7 +9,9 @@ import { BodyFigure } from './BodyFigure';
 import { BodyMesh } from './BodyMesh';
 import { OrganNode } from './OrganNode';
 import { FlowRing } from './FlowRing';
-import { TEACHING_NODES, ANATOMICAL_NODES, buildFlowPaths } from './flowGeometry';
+import { ANATOMICAL_NODES, TEACHING_NODES, buildFlowPaths, flowSegmentsFor, TheaterSex } from './flowGeometry';
+import type { TheaterLayout } from './TheaterControls';
+import { MnemonicDiagram } from './MnemonicDiagram';
 import { TheaterControls } from './TheaterControls';
 import { CAMERA_VIEWS, CameraViewKey } from './bodyGeometry';
 
@@ -66,12 +68,15 @@ export function MeridianTheater({ initialMeridianName }: Props) {
   // 逐经显隐（owner 2026-08-20）：默认全显，可任意组合/只看升/只看降
   // owner 2026-08-22：解剖体剪影（NIH VH 皮肤网格）/ 示意体（几何剪影）可切换
   // owner 2026-08-22：脏腑位可切换——解剖位(NIH 实测) / 教学位(左升右降示意)
-  const [anatomicalNodes, setAnatomicalNodes] = useState(true);
+  // 脏腑位三态（owner 2026-09-05）：解剖位／教学位（圆运动示意坐标）／口诀位（循行口诀图）
+  const [layout, setLayout] = useState<TheaterLayout>('anatomical');
   // 平移/缩放后可一键归位（平移会改变注视点，光靠视角按钮回不来）
   const [resetTick, setResetTick] = useState(0);
   // owner 2026-08-22：平移原先只绑右键，触控板上根本做不出来（双指=滚动→被当成缩放）。
   // 改为可切换左键拖动的行为；按住 Shift 亦临时切平移。
   const [dragMode, setDragMode] = useState<'rotate' | 'pan'>('rotate');
+  // 男/女体（owner 2026-08-27）：女体走线为男体教学线贴她体表＋她本人指趾端
+  const [sex, setSex] = useState<TheaterSex>('male');
   const [shiftHeld, setShiftHeld] = useState(false);
   const controlsRef = useRef<OrbitRef>(null);
 
@@ -98,8 +103,8 @@ export function MeridianTheater({ initialMeridianName }: Props) {
     c.mouseButtons.LEFT = panning ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE;
     c.touches.ONE = panning ? THREE.TOUCH.PAN : THREE.TOUCH.ROTATE;
   }, [panning, resetTick]);
-  const nodes = anatomicalNodes ? ANATOMICAL_NODES : TEACHING_NODES;
-  const flowPaths = useMemo(() => buildFlowPaths(nodes), [nodes]);
+  const nodes = layout === 'teaching' ? TEACHING_NODES : ANATOMICAL_NODES;
+  const flowPaths = useMemo(() => buildFlowPaths(nodes, flowSegmentsFor(sex)), [nodes, sex]);
   const [visibleIds, setVisibleIds] = useState<Set<number>>(
     () => new Set(MERIDIAN_FLOW.map((m) => m.id))
   );
@@ -176,22 +181,28 @@ export function MeridianTheater({ initialMeridianName }: Props) {
         <pointLight color={lights.top.color} intensity={lights.top.intensity} distance={lights.top.distance} decay={0} position={[0, 6, 2]} />
         <pointLight color={lights.bottom.color} intensity={lights.bottom.intensity} distance={lights.bottom.distance} decay={0} position={[0, -5, 2]} />
 
-        {/* 人体：NIH 男体（owner 2026-08-25：五场景统一，与经穴图同一具）；
-            示意体退场，仅作加载占位。剖面模式变透明以显露背面路径 */}
-        <Suspense fallback={<BodyFigure opacity={seeThrough ? 0.12 : 0.5} />}>
-          <BodyMesh opacity={seeThrough ? 0.1 : 0.45} />
-        </Suspense>
+        {layout !== 'mnemonic' ? (
+          <>
+            {/* 人体：NIH 男/女体；示意体仅作加载占位。剖面模式变透明以显露背面路径 */}
+            <Suspense fallback={<BodyFigure opacity={seeThrough ? 0.12 : 0.5} />}>
+              <BodyMesh opacity={seeThrough ? 0.1 : 0.45} sex={sex} />
+            </Suspense>
 
-        {/* 十二脏腑：固定解剖位节点（永不绕转） */}
-        {ORGANS.map((organ) => {
-          const meridianId = MERIDIAN_FLOW.find((m) => m.name === `${organ.name}经`)?.id ?? -1;
-          return (
-            <OrganNode key={organ.nameEn} organ={organ} position={nodes[organ.name]} active={meridianId === activeId} onSelect={pickOrgan} />
-          );
-        })}
+            {/* 十二脏腑：固定解剖位节点（永不绕转） */}
+            {ORGANS.map((organ) => {
+              const meridianId = MERIDIAN_FLOW.find((m) => m.name === `${organ.name}经`)?.id ?? -1;
+              return (
+                <OrganNode key={organ.nameEn} organ={organ} position={nodes[organ.name]} active={meridianId === activeId} onSelect={pickOrgan} />
+              );
+            })}
 
-        {/* 流注闭环 + 金色气血（受逐经显隐控制） */}
-        <FlowRing paths={flowPaths} activeId={activeId} speed={speed} visibleIds={visibleIds} onSelect={pickMeridian} />
+            {/* 流注闭环 + 金色气血（受逐经显隐控制） */}
+            <FlowRing paths={flowPaths} activeId={activeId} speed={speed} visibleIds={visibleIds} onSelect={pickMeridian} />
+          </>
+        ) : (
+          /* 口诀位＝循行口诀图：与流注循环同步，点束选经 */
+          <MnemonicDiagram activeId={activeId} speed={speed} visibleIds={visibleIds} onPickMeridian={(id) => pickMeridian(MERIDIAN_FLOW[id])} />
+        )}
 
         <CameraRig view={view} resetTick={resetTick} controls={controlsRef} />
         {/* 拖动旋转 · 右键/双指平移 · 滚轮缩放；可凑近到手指/足趾细看 */}
@@ -226,10 +237,16 @@ export function MeridianTheater({ initialMeridianName }: Props) {
         visibleIds={visibleIds}
         onToggleVisible={toggleVisible}
         onShowGroup={showGroup}
+        sex={sex}
+        onSexChange={setSex}
         dragMode={panning ? 'pan' : 'rotate'}
         onDragModeChange={setDragMode}
-        anatomicalNodes={anatomicalNodes}
-        onAnatomicalNodesToggle={() => setAnatomicalNodes((v) => !v)}
+        layout={layout}
+        onLayoutChange={(next) => {
+          // 切进口诀图（平面图）时把镜头摆回正面，免得平面被侧看成一条线
+          if (next === 'mnemonic' && layout !== 'mnemonic') { setView('front'); setResetTick((t) => t + 1); }
+          setLayout(next);
+        }}
       />
     </div>
   );

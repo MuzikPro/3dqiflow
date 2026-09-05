@@ -222,3 +222,17 @@ describe('visual emphasis scale', () => {
     expect(emphasisScale(0.1, 1)).toBeGreaterThan(0.4);
   });
 });
+
+describe('debug time offset (LOCAL mode only, not persisted)', () => {
+  afterEach(() => { vi.useRealTimers(); temporalStore.reset(); });
+  it('shifts the virtual now in LOCAL mode and is part of the store config key', () => {
+    vi.useFakeTimers(); vi.setSystemTime(new Date(2026, 8, 5, 18, 59, 30));
+    const c = createVirtualClock({ source: 'LOCAL_REAL_TIME', debugOffsetSeconds: 60 });
+    expect(resolveTemporal(c.now(), 10).entry.code).toBe('PC');   // 19:00:30
+    const base = { enabled: true, timeSource: 'LOCAL_REAL_TIME' as const, manualIndex: 0, previewCycleMinutes: 12, transitionMinutes: 10 as const };
+    temporalStore.configure(base);
+    expect(temporalStore.getSnapshot()?.entry.code).toBe('KI');
+    temporalStore.configure({ ...base, debugOffsetSeconds: 60 });
+    expect(temporalStore.getSnapshot()?.entry.code).toBe('PC');
+  });
+});

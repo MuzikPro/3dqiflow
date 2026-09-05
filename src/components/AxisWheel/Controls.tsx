@@ -26,6 +26,8 @@ interface Props {
   onClockSelect: (index: number) => void;
   onClockLive: () => void;
   onOpenMeridian?: (name: string) => void;
+  /** 时辰条：跳到经穴图的子午流注视图并对到该时辰（owner 2026-09-05） */
+  onOpenClock?: (index: number) => void;
   // ── 节气实时/手动 ──
   seasonLive: boolean;
   onSeasonToday: () => void;
@@ -42,7 +44,7 @@ export function Controls(props: Props) {
   const {
     selectedOrgan, pairedOrgan, onCloseCard, seasonIndex, onSeasonChange,
     onSelectElement,
-    clockIndex, clockLive, onClockSelect, onClockLive, onOpenMeridian,
+    clockIndex, clockLive, onClockSelect, onClockLive, onOpenMeridian, onOpenClock,
     seasonLive, onSeasonToday,
     skin, onSkinChange, solarStage, onSolarStageChange, todayTermIndex
   } = props;
@@ -186,12 +188,13 @@ export function Controls(props: Props) {
           {clockEntry.hours}{tr('时')} {clockEntry.meridianFull}{tr('当令')}
           <span style={{ color: UI.textMuted }}> · {clockEntry.note}</span>
         </div>
-        {onOpenMeridian && (
+        {(onOpenClock ?? onOpenMeridian) && (
           <button
-            onClick={() => onOpenMeridian(clockEntry.meridian)}
-            style={{ ...toggleButtonStyle(false), fontSize: '10px', padding: '2px 8px' }}
+            onClick={() => (onOpenClock ? onOpenClock(clockIndex) : onOpenMeridian!(clockEntry.meridian))}
+            style={{ ...toggleButtonStyle(false), fontSize: '10px', padding: '2px 8px', whiteSpace: 'nowrap' }}
+            title={tr('在经穴图的子午流注视图中看这一时辰')}
           >
-            {tr('经络→3D')}
+            {onOpenClock ? tr('子午流注→经穴图') : tr('经络→3D')}
           </button>
         )}
       </div>

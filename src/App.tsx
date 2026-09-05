@@ -38,6 +38,8 @@ function App() {
   const [meridianRequest, setMeridianRequest] = useState<string | null>(null);
   const [articleRequest, setArticleRequest] = useState<number | null>(null);
   const [pulseRequest, setPulseRequest] = useState<{ pulse: string; tongue: string } | null>(null);
+  // 轴轮模型时辰条 → 经穴图子午流注（记住来路，经穴图上给「← 返回」）
+  const [clockRequest, setClockRequest] = useState<{ index: number; from: SceneKey } | null>(null);
   // owner 2026-08-20：首次引导弹窗下线——落地页直接进轴轮模型。
   // Onboarding 组件保留在 components/ 未引用（同 SettingsModal，待重新安置）。
   // 语言（中/英切换，owner 2026-09-03 复位入口）；主题恒为暗色（见文件头 owner 决定）
@@ -55,6 +57,10 @@ function App() {
     setArticleRequest(id);
     setScene('reader');
   };
+  const openClock = (index: number) => {
+    setClockRequest({ index, from: scene });
+    setScene('acupoint');
+  };
   const openPulseTongue = (pulse: string, tongue: string) => {
     setPulseRequest({ pulse, tongue });
     setScene('pulse');
@@ -62,11 +68,18 @@ function App() {
 
   return (
     <div key={lang}>
-      {scene === 'axis' && <AxisWheel onOpenFormula={openFormula} onOpenMeridian={openMeridian} />}
+      {scene === 'axis' && <AxisWheel onOpenFormula={openFormula} onOpenMeridian={openMeridian} onOpenClock={openClock} />}
       {scene === 'meridian' && (
         <MeridianTheater key={meridianRequest ?? 'default'} initialMeridianName={meridianRequest} />
       )}
-      {scene === 'acupoint' && <AcupointAtlas />}
+      {scene === 'acupoint' && (
+        <AcupointAtlas
+          key={clockRequest ? `clock-${clockRequest.index}` : 'default'}
+          initialClockIndex={clockRequest?.index ?? null}
+          returnLabel={clockRequest ? t(lang, SCENE_LABEL_KEYS[clockRequest.from]) : null}
+          onReturn={clockRequest ? () => { const back = clockRequest.from; setClockRequest(null); setScene(back); } : undefined}
+        />
+      )}
       {scene === 'about' && <AboutPage />}
       {scene === 'formula' && (
         <Formula3D key={formulaRequest ?? 'default'} initialFormulaName={formulaRequest} onOpenArticle={openArticle} />
@@ -122,7 +135,7 @@ function App() {
               <button
                 key={key}
                 style={toggleButtonStyle(scene === key)}
-                onClick={() => setScene(key)}
+                onClick={() => { setClockRequest(null); setScene(key); }}
               >
                 {t(lang, SCENE_LABEL_KEYS[key])}
               </button>

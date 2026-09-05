@@ -49,9 +49,11 @@ interface Props {
   onOpenFormula: (name: string) => void;
   /** 时辰条联动：跳到十二经剧场看当令经络 */
   onOpenMeridian?: (name: string) => void;
+  /** 时辰条→经穴图子午流注 */
+  onOpenClock?: (index: number) => void;
 }
 
-export function AxisWheel({ onOpenFormula, onOpenMeridian }: Props) {
+export function AxisWheel({ onOpenFormula, onOpenMeridian, onOpenClock }: Props) {
   // 窄屏拉远相机：竖屏横向视野不足，否则圆环/人体被切边
   const narrow = useNarrow();
   const [selectedOrgan, setSelectedOrgan] = useState<Organ | null>(null);
@@ -277,6 +279,7 @@ export function AxisWheel({ onOpenFormula, onOpenMeridian }: Props) {
         onClockSelect={(index) => setClockManual(index)}
         onClockLive={() => setClockManual(null)}
         onOpenMeridian={onOpenMeridian}
+        onOpenClock={onOpenClock}
         skin={skin}
         onSkinChange={setSkin}
         solarStage={solarStage}

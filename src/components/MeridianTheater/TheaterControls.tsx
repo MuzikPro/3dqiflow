@@ -7,7 +7,7 @@ import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
 import { CameraViewKey } from './bodyGeometry';
 import { useNarrow } from '@/hooks/useNarrow';
 import { useState } from 'react';
-import { tr } from '@/i18n';
+import { tr, getLang } from '@/i18n';
 
 interface Props {
   view: CameraViewKey;
@@ -269,7 +269,7 @@ export function TheaterControls(props: Props) {
                   }}
                 />
                 {tr(m.name)}
-                <span style={{ marginLeft: 'auto', fontSize: '11px' }}>
+                <span style={{ marginLeft: 'auto', fontSize: '11px', whiteSpace: 'nowrap', paddingLeft: '6px' }}>
                   {m.direction === 'ascend' ? tr('↑升') : tr('↓降')}
                 </span>
               </button>
@@ -285,7 +285,7 @@ export function TheaterControls(props: Props) {
           className="panel-pop"
           style={{
             ...panelStyle,
-            position: 'fixed', right: '210px', top: '90px', zIndex: 101,
+            position: 'fixed', right: getLang() === 'zh' ? '210px' : '297px', top: '90px', zIndex: 101,
             width: '260px', background: UI.panelBgStrong,
             borderRadius: RADIUS.md, padding: '18px', animation: 'fadeIn 0.3s'
           }}
@@ -319,7 +319,7 @@ export function TheaterControls(props: Props) {
           className="panel-pop"
           style={{
             ...panelStyle,
-            position: 'fixed', right: '210px', top: '90px', zIndex: 101,
+            position: 'fixed', right: getLang() === 'zh' ? '210px' : '297px', top: '90px', zIndex: 101,
             width: '270px', background: UI.panelBgStrong,
             borderRadius: RADIUS.md, padding: '18px', animation: 'fadeIn 0.3s'
           }}

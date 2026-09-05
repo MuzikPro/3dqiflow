@@ -63,7 +63,7 @@ export function MeridianTheater({ initialMeridianName }: Props) {
   const [activeId, setActiveId] = useState(initial?.id ?? 0);
   const [selected, setSelected] = useState<Meridian | null>(initial);
   const [selectedOrgan, setSelectedOrgan] = useState<Organ | null>(null);
-  const [speed, setSpeed] = useState(1);       // 流注速度 0.5x–3x
+  const [speed, setSpeed] = useState(0.5);     // 流注速度 0.5x–3x（owner 2026-09-05：默认放慢到 0.5x）
   const [seeThrough, setSeeThrough] = useState(false); // 剖面：看见背面膀胱/肾路径       // 圆运动叠加
   // 逐经显隐（owner 2026-08-20）：默认全显，可任意组合/只看升/只看降
   // owner 2026-08-22：解剖体剪影（NIH VH 皮肤网格）/ 示意体（几何剪影）可切换

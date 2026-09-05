@@ -578,6 +578,9 @@ export const EN: Record<string, string> = {
   '重播': 'Replay',
   '清除': 'Clear',
   '选一方，看它如何修圆': 'Pick a formula and watch it mend the circle',
+  '子午流注→经穴图': 'Clock → Acupoints',
+  '在经穴图的子午流注视图中看这一时辰': 'See this two-hour period in the atlas\' midnight-noon view',
+  '返回': 'Back to',
   '口诀位': 'Mnemonic view',
   '整幅循行口诀图：手三阴胸走手、手三阳手走头、足三阳头走足、足三阴足走腹': 'The full route-mnemonic diagram: hand yin chest→hand, hand yang hand→head, foot yang head→foot, foot yin foot→abdomen'
 };

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { tr } from '@/i18n';
+import { tr, getLang } from '@/i18n';
 import { ACUPOINTS, MERIDIAN_META } from '@/data/acupoints';
 import { UI, RADIUS } from '@/styles/theme';
 import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
@@ -384,7 +384,7 @@ export function AcupointControls(props: Props) {
         <div
           className="panel-pop"
           style={{
-            ...panelStyle, position: 'fixed', right: '240px', top: '90px', zIndex: 101,
+            ...panelStyle, position: 'fixed', right: getLang() === 'zh' ? '240px' : '302px', top: '90px', zIndex: 101,
             width: '285px', background: UI.panelBgStrong, borderRadius: RADIUS.md,
             padding: '16px', animation: 'fadeIn 0.3s'
           }}

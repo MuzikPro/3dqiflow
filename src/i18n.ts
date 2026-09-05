@@ -75,7 +75,14 @@ import { EN } from './i18nDict';
 // 惰性求值：KEY_LANG 在本文件更靠后（const 有暂时性死区），模块顶层直接
 // loadLang() 会被其 try/catch 吞成 'zh'——首次访问时再读取存储。
 let current: Lang | null = null;
-const lang0 = (): Lang => (current ??= loadLang());
+/** 把语言写到 <html data-lang>：英文比中文长，侧栏宽度由 CSS 据此放宽 */
+function applyLangAttr(lang: Lang): void {
+  try { document.documentElement.dataset.lang = lang; } catch { /* SSR / 无 DOM */ }
+}
+const lang0 = (): Lang => {
+  if (current === null) { current = loadLang(); applyLangAttr(current); }
+  return current;
+};
 const subscribers = new Set<() => void>();
 
 export function getLang(): Lang {
@@ -84,6 +91,7 @@ export function getLang(): Lang {
 export function setLang(lang: Lang): void {
   current = lang;
   saveLang(lang);
+  applyLangAttr(lang);
   subscribers.forEach((fn) => fn());
 }
 export function useLang(): Lang {

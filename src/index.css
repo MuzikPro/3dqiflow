@@ -64,6 +64,11 @@ body {
 .app-header { padding-top: calc(15px + env(safe-area-inset-top, 0px)) !important; }
 .bar-bottom { padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important; }
 
+/* 英文比中文长（owner 2026-09-05 实录：右栏「Large Intestine (LI) ↑ rise」折成三行）：
+   非中文界面时侧栏放宽。用 min-width 盖过组件内联 width；窄屏媒体查询在后，优先。 */
+html:not([data-lang="zh"]) .panel-left { min-width: 232px; }
+html:not([data-lang="zh"]) .panel-right { min-width: 262px; }
+
 /* 侧栏内滚（奇经小节加入后右栏在矮窗口会超出视口）：细滚动条，别喧宾夺主 */
 .panel-left, .panel-right {
   scrollbar-width: thin;
@@ -120,6 +125,7 @@ body {
     flex-shrink: 0;
   }
 
+  .panel-left, .panel-right { min-width: 0 !important; }
   .panel-left {
     left: 8px !important;
     top: 76px !important;

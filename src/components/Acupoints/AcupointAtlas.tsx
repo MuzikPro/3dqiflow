@@ -265,7 +265,15 @@ function FocusRig({ req }: { req: FocusReq | null }) {
  * 经穴图：十二正经 + 其经穴，落在人体上（本场景不画脏腑）。
  * 坐标为示意定位，非解剖测量值 —— 见 src/data/acupoints.ts 头部说明。
  */
-export function AcupointAtlas() {
+interface AtlasProps {
+  /** 从别页带时辰进来：直接开启子午流注并对到该时辰 */
+  initialClockIndex?: number | null;
+  /** 来路页名（有则显示「← 返回 …」） */
+  returnLabel?: string | null;
+  onReturn?: () => void;
+}
+
+export function AcupointAtlas({ initialClockIndex = null, returnLabel = null, onReturn }: AtlasProps = {}) {
   const narrow = useNarrow();
   const [view, setView] = useState<AtlasViewKey>('front');
   const [visible, setVisible] = useState<Set<string>>(() => new Set(TWELVE));
@@ -380,6 +388,16 @@ export function AcupointAtlas() {
     }
   };
 
+  // 带时辰进入（轴轮模型时辰条 → 这里）：等同手动开启子午流注后拨到该时辰
+  useEffect(() => {
+    if (initialClockIndex === null || initialClockIndex === undefined) return;
+    savedVisibleRef.current = new Set(visible);
+    setVisible(new Set(TWELVE));
+    setLiuzhu(true);
+    gotoShichen(initialClockIndex, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialClockIndex]);
+
   // 实时模式：每分钟对表，跨时辰即交接
   useEffect(() => {
     if (!liuzhu || !liveClock) return;
@@ -430,6 +448,15 @@ export function AcupointAtlas() {
 
   return (
     <div className="scene-root" style={{ width: '100vw', height: '100vh', background: BACKGROUND.gradient }}>
+      {onReturn && returnLabel && (
+        <button
+          className="back-chip"
+          style={{ ...toggleButtonStyle(false), position: 'fixed', left: '20px', top: '58px', zIndex: 120, fontSize: '11px', padding: '3px 10px' }}
+          onClick={onReturn}
+        >
+          ← {tr('返回')} {returnLabel}
+        </button>
+      )}
       <Canvas
         flat
         legacy

@@ -7,7 +7,7 @@ import { MERIDIAN_CLOCK, FIVE_TONES, partnerOf } from '../src/data/meridianClock
 import { TWELVE } from '../src/components/Acupoints/pointGeometry';
 import {
   resolveAt, resolveTemporal, slotIndexAt, slotStartSeconds, secondsOfDay, smoothstep, meridianWeights,
-  createVirtualClock, temporalStore, SLOT_SECONDS
+  createVirtualClock, temporalStore, SLOT_SECONDS, emphasisScale
 } from '../src/temporal';
 
 const at = (h: number, m = 0, s = 0) => h * 3600 + m * 60 + s;
@@ -206,5 +206,19 @@ describe('store: mode isolation and recompute', () => {
     temporalStore.configure({ enabled: true, ...base, timeSource: 'MANUAL_SHICHEN', manualIndex: 6 });
     expect(temporalStore.getSnapshot()).toBe(first);
     expect(first?.entry.code).toBe('HT'); expect(first?.manual).toBe(true);
+  });
+});
+
+describe('visual emphasis scale', () => {
+  it('is identity at zero emphasis and gently dominant otherwise', () => {
+    for (const w of [0.1, 0.3, 0.55, 1]) expect(emphasisScale(w, 0)).toBe(1);
+    expect(emphasisScale(1, 0.5)).toBeCloseTo(1.3);
+    expect(emphasisScale(0.3, 0.5)).toBeCloseTo(0.79);
+    expect(emphasisScale(0.1, 0.5)).toBeCloseTo(0.73);
+    expect(emphasisScale(0.1, 1)).toBeCloseTo(0.46);
+    expect(emphasisScale(1, 1)).toBeCloseTo(1.6);
+    // 单调：权重越高系数越大；永不归零
+    expect(emphasisScale(0.55, 0.5)).toBeGreaterThan(emphasisScale(0.3, 0.5));
+    expect(emphasisScale(0.1, 1)).toBeGreaterThan(0.4);
   });
 });

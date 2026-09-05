@@ -84,3 +84,13 @@ export function meridianWeights(r: TemporalResolution): Record<string, number> {
   add(r.next, r.nextWeight);
   return out;
 }
+
+/**
+ * 视觉侧重系数：某经权重 w∈[0.1,1] × 侧重强度 e∈[0,1] → 乘到线亮度/粒径上。
+ * e=0 恒为 1（无时间维度时原样）；e=0.5 时当令 ×1.3、其余 ×0.73——"一条经温和地突出"，不是有无之别。
+ */
+export function emphasisScale(w: number, e: number): number {
+  const dim = 0.6 * e * (1 - w);
+  const boost = 0.6 * e * Math.max(0, (w - 0.3) / 0.7);
+  return 1 - dim + boost;
+}

@@ -16,6 +16,11 @@ import { Starfield } from './Starfield';
 import { SeasonRing } from './SeasonRing';
 import { Controls } from './Controls';
 import { QiMode, createQiMotion, targetsFor } from './qiMotion';
+import { FORMULAS, Formula } from '@/data/formulas';
+import { FormulaPlay, Phase, phaseColor, phaseText } from '../Formula3D/FormulaPlay';
+import { panelStyle, toggleButtonStyle } from '../UI/panelStyle';
+import { UI, RADIUS } from '@/styles/theme';
+import { tr } from '@/i18n';
 
 /** 演示剧本时间点（ms）：运轴 → 运轮 → 复圆 → 回到常态 */
 
@@ -73,6 +78,11 @@ export function AxisWheel({ onOpenFormula, onOpenMeridian }: Props) {
   const solarEntry = CHAPTER_SOLAR_MAP[solarStage - 1];
   const todayTermIndex = currentSolarTermIndex(now);
   const [mode, setMode] = useState<QiMode>('normal');
+  // 方剂上轮（owner 2026-09-05）：方剂详解侧台的「修圆」放到全图上演——选方即演
+  const [formula, setFormula] = useState<Formula | null>(null);
+  const [replay, setReplay] = useState(0);
+  const [phase, setPhase] = useState<Phase>('disturbed');
+  const tight = useNarrow(1000);
 
   const motion = useMemo(createQiMotion, []);
   const targetsRef = useRef(targetsFor('normal'));
@@ -213,6 +223,12 @@ export function AxisWheel({ onOpenFormula, onOpenMeridian }: Props) {
           />
         ))}
 
+        {/* 方剂上轮：写入本场景的仪表目标，由 MotionLerper 统一插值 */}
+        {formula && (
+          <FormulaPlay formula={formula} motion={motion} targetsRef={targetsRef}
+                       replayKey={replay} labelDistance={10} onPhase={setPhase} />
+        )}
+
         {/* 二十四节气光环：经典皮肤=滑块使用中显示；节气皮肤=常显+章节段点亮 */}
         {skin === 'solar' ? (
           <SeasonRing
@@ -270,6 +286,44 @@ export function AxisWheel({ onOpenFormula, onOpenMeridian }: Props) {
         onModeChange={setMode}
         onOpenFormula={onOpenFormula}
       />
+
+      {/* 方剂上轮面板：右下角，避开中央时辰条与右上脏腑卡 */}
+      {!tight && (
+        <div
+          className="panel-formula"
+          style={{
+            ...panelStyle, position: 'fixed', right: '16px', bottom: '16px', zIndex: 100,
+            width: '206px', borderRadius: RADIUS.md, padding: '11px 12px'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '11px', color: UI.textMuted, letterSpacing: '1px', flex: 1 }}>{tr('方义圆运动')}</span>
+            {formula && (
+              <button style={{ ...toggleButtonStyle(false), fontSize: '10px', padding: '1px 7px' }}
+                      onClick={() => setFormula(null)}>{tr('清除')}</button>
+            )}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+            {FORMULAS.map((f) => (
+              <button key={f.name} style={{ ...toggleButtonStyle(formula?.name === f.name), fontSize: '11px', padding: '3px 9px' }}
+                      onClick={() => { setFormula(f); setReplay((v) => v + 1); }}>
+                {f.name}
+              </button>
+            ))}
+          </div>
+          {formula ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '9px', fontSize: '11px' }}>
+              <span style={{ color: phaseColor(phase), fontWeight: 'bold', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {formula.categoryLabel} · {phaseText(formula, phase)}
+              </span>
+              <button style={{ ...toggleButtonStyle(false), fontSize: '10px', padding: '2px 8px' }}
+                      onClick={() => setReplay((v) => v + 1)} title={tr('重播')}>↻</button>
+            </div>
+          ) : (
+            <div style={{ marginTop: '8px', fontSize: '10px', color: UI.textFaint, lineHeight: 1.5 }}>{tr('选一方，看它如何修圆')}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

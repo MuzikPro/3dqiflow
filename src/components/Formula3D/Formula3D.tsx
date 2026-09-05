@@ -34,7 +34,7 @@ export function Formula3D({ initialFormulaName, onOpenArticle }: Props) {
 
   const { camera, lights } = THREE_DEFAULTS;
   // 方义圆运动台：宽屏常驻右侧；窄屏让位给内容卡（轴轮模型页仍可看全图）
-  const compact = useNarrow(1240);
+  const compact = useNarrow(1180);
   const wheelVisible = !showTree && !compact;
 
   return (
@@ -78,7 +78,7 @@ export function Formula3D({ initialFormulaName, onOpenArticle }: Props) {
       {/* 看树时只留左侧选方，中部内容卡让位给 3D 树 */}
       {wheelVisible && <FormulaWheel formula={formula} />}
       <FormulaControls formula={formula} onPickFormula={pickFormula} cardVisible={!showTree}
-                       onOpenArticle={onOpenArticle} rightInset={wheelVisible ? 370 : 180} />
+                       onOpenArticle={onOpenArticle} rightInset={wheelVisible ? 'calc(clamp(340px, 30vw, 460px) + 40px)' : 180} />
     </div>
   );
 }

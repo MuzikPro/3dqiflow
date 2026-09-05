@@ -257,6 +257,13 @@ body {
   gap: 8px 12px;
   align-items: baseline;
 }
+/* 卡宽而非视口宽决定折行：方义圆运动侧台占位后卡会变窄（owner 2026-09-05 实录：
+   1280px 下作用列被挤成一字一行）。容器查询按卡的实际宽度切到窄版网格。 */
+.formula-card { container-type: inline-size; }
+@container (max-width: 640px) {
+  .drug-grid { grid-template-columns: 96px 40px 80px 1fr; }
+  .drug-grid .drug-action { grid-column: 1 / -1; padding-left: 16px; margin-top: -4px; }
+}
 .formula-card::-webkit-scrollbar { width: 5px; }
 .formula-card::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.18);

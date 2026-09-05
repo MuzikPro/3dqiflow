@@ -573,5 +573,7 @@ export const EN: Record<string, string> = {
   '枢机不利': 'pivot jammed',
   '君臣佐使就位': 'herbs taking their places',
   '复圆': 'circle restored',
-  '重播': 'Replay'
+  '重播': 'Replay',
+  '清除': 'Clear',
+  '选一方，看它如何修圆': 'Pick a formula and watch it mend the circle'
 };

@@ -15,7 +15,7 @@ interface Props {
   /** 相关条文：跳到条文阅读并定位该条 */
   onOpenArticle?: (id: number) => void;
   /** 内容卡右侧留白（方义圆运动台占位时加宽） */
-  rightInset?: number;
+  rightInset?: number | string;
 }
 
 /** ④ 圆运动定位 chip 色（DELIVERY_WISDOM：运轮红/运轴黄/运枢绿/轴轮并运紫） */
@@ -150,7 +150,7 @@ export function FormulaControls(props: Props) {
         className="formula-card"
         style={{
           ...panelStyle,
-          position: 'fixed', left: '300px', right: `${rightInset}px`, top: '90px', bottom: '24px',
+          position: 'fixed', left: '300px', right: typeof rightInset === 'number' ? `${rightInset}px` : rightInset, top: '90px', bottom: '24px',
           zIndex: 90, borderRadius: RADIUS.md, padding: '22px 28px',
           maxWidth: '780px', margin: '0 auto', overflowY: 'auto'
         }}

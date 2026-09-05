@@ -23,8 +23,7 @@ function ElementGeometry({ element, size }: { element: ElementKey; size: number 
   }
 }
 
-/** 天地之间的双向能量粒子流（天→地亮；地→天暗）。from/to 任意两点，
- *  中轴剖面（横向）与常态（前后向）共用。 */
+/** 天地之间的双向能量粒子流（天→地亮；地→天暗）。 */
 function EnergyFlow({ from, to, color, active }: {
   from: [number, number, number]; to: [number, number, number];
   color: string; active: boolean;
@@ -88,39 +87,26 @@ interface Props {
   zShift?: number;
   /** 合一视图：天地两数合显一体，每元素只出现一枚，虚线恰从此发出 */
   merged?: boolean;
-  /** 中轴剖面：五组叠成一根轴——天列在左（升），地列在右（降） */
-  axis?: boolean;
 }
 
 const NUM = '一二三四五六七八九十';
 
-/** 中轴剖面（脚本E交互：「天在左·升，地在右·降」）：五组按圆运动
- *  剖面自下而上叠放——水底、木下、土中、金上、火顶 */
-const AXIS_Y: Record<string, number> = {
-  water: -2.3, wood: -1.1, earth: 0.15, metal: 1.4, fire: 2.6
-};
-const AXIS_X = 1.15;
-
 /** 某组配对当前的天/地几何位（本组件与人体联动线共用，勿各算各的） */
 export function pairDisplayPos(
   pair: HetuPair,
-  opts: { axis?: boolean; merged?: boolean; layerZ: number; zShift?: number }
+  opts: { merged?: boolean; layerZ: number; zShift?: number }
 ): { heaven: [number, number, number]; earth: [number, number, number] } {
   const z0 = opts.zShift ?? 0;
   if (opts.merged) {
     const [x, y] = pair.position;
     return { heaven: [x, y + 0.3, z0], earth: [x, y + 0.3, z0] };
   }
-  if (opts.axis) {
-    const y = AXIS_Y[pair.element] + 0.3;
-    return { heaven: [-AXIS_X, y, z0], earth: [AXIS_X, y, z0] };
-  }
   const [x, y] = pair.position;
   return { heaven: [x, y + 0.3, z0 - opts.layerZ], earth: [x, y + 0.3, z0 + opts.layerZ] };
 }
 
 /** 河图五组配对：天（阳·奇·后层·实心发光）＋地（阴·偶·前层·线框半透明）＋能量连线 */
-export function HetuPairs({ layerZ, selected, onSelect, zShift = 0, merged = false, axis = false }: Props) {
+export function HetuPairs({ layerZ, selected, onSelect, zShift = 0, merged = false }: Props) {
   return (
     <group position={[0, 0.3, zShift]}>
       {HETU_PAIRS.map((pair) => {
@@ -128,7 +114,7 @@ export function HetuPairs({ layerZ, selected, onSelect, zShift = 0, merged = fal
         const active = selected?.element === pair.element;
         const dimmed = selected !== null && !active;
         // 组内坐标：pairDisplayPos 给的是世界位（含 group 的 y+0.3 与 zShift），减回去
-        const dp = pairDisplayPos(pair, { axis, merged, layerZ, zShift });
+        const dp = pairDisplayPos(pair, { merged, layerZ, zShift });
         const hv: [number, number, number] = [dp.heaven[0], dp.heaven[1] - 0.3, dp.heaven[2] - zShift];
         const ea: [number, number, number] = [dp.earth[0], dp.earth[1] - 0.3, dp.earth[2] - zShift];
         const mid: [number, number, number] = [(hv[0] + ea[0]) / 2, (hv[1] + ea[1]) / 2, (hv[2] + ea[2]) / 2];
@@ -160,7 +146,7 @@ export function HetuPairs({ layerZ, selected, onSelect, zShift = 0, merged = fal
         }
         return (
           <group key={pair.element}>
-            {/* 天·后层（中轴剖面时=左列·升）：实心发光 */}
+            {/* 天·后层：实心发光 */}
             <mesh position={hv} onClick={pick} scale={active ? 1.25 : 1}>
               <ElementGeometry element={pair.element} size={0.62} />
               <meshStandardMaterial
@@ -171,7 +157,7 @@ export function HetuPairs({ layerZ, selected, onSelect, zShift = 0, merged = fal
                 opacity={dimmed ? 0.25 : 1}
               />
             </mesh>
-            {/* 地·前层（中轴剖面时=右列·降）：线框半透明 */}
+            {/* 地·前层：线框半透明 */}
             <mesh position={ea} onClick={pick} scale={active ? 1.25 : 1}>
               <ElementGeometry element={pair.element} size={0.62} />
               <meshStandardMaterial
@@ -184,19 +170,19 @@ export function HetuPairs({ layerZ, selected, onSelect, zShift = 0, merged = fal
               />
             </mesh>
             {/* 能量连线 */}
-            <mesh position={mid} rotation={axis ? [0, 0, Math.PI / 2] : [Math.PI / 2, 0, 0]}>
-              <cylinderGeometry args={[0.015, 0.015, axis ? AXIS_X * 2 : layerZ * 2, 6]} />
+            <mesh position={mid} rotation={[Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.015, 0.015, layerZ * 2, 6]} />
               <meshBasicMaterial color={color} transparent opacity={dimmed ? 0.1 : 0.4} depthWrite={false} />
             </mesh>
             <EnergyFlow from={hv} to={ea} color={color} active={active} />
             <Html center distanceFactor={10} position={[hv[0], hv[1] + 0.75, hv[2]]} style={{ pointerEvents: 'none' }}>
               <div style={{ color, fontSize: '12px', whiteSpace: 'nowrap', textShadow: '0 0 6px rgba(0,0,0,0.9)' }}>
-                {tr('天')}{tr(NUM[pair.heavenNumber - 1])}·{pair.label}{axis ? tr(' ↑升') : ''}
+                {tr('天')}{tr(NUM[pair.heavenNumber - 1])}·{pair.label}
               </div>
             </Html>
             <Html center distanceFactor={10} position={[ea[0], ea[1] - 0.75, ea[2]]} style={{ pointerEvents: 'none' }}>
               <div style={{ color: UI.textSecondary, fontSize: '11px', whiteSpace: 'nowrap', textShadow: '0 0 6px rgba(0,0,0,0.9)' }}>
-                {tr('地')}{tr(NUM[pair.earthNumber - 1])}{axis ? tr(' ↓降') : ''}
+                {tr('地')}{tr(NUM[pair.earthNumber - 1])}
               </div>
             </Html>
           </group>

@@ -11,9 +11,6 @@ export type HetuLuoshuMode = 'hetu' | 'luoshu' | 'unity';
 interface Props {
   mode: HetuLuoshuMode;
   onModeChange: (mode: HetuLuoshuMode) => void;
-  /** 中轴剖面（脚本E：五组叠成轴，天左升地右降，镜头钉正面） */
-  axisOn: boolean;
-  onAxisToggle: () => void;
   layerZ: number;
   onLayerZChange: (z: number) => void;
   termIndex: number;
@@ -29,7 +26,7 @@ const MODE_LABELS: Record<HetuLuoshuMode, string> = { hetu: '河图', luoshu: '�
 
 export function HetuLuoshuControls(props: Props) {
   const {
-    mode, onModeChange, axisOn, onAxisToggle, layerZ, onLayerZChange, termIndex, onTermChange,
+    mode, onModeChange, layerZ, onLayerZChange, termIndex, onTermChange,
     humanSync, onHumanSyncToggle, selectedPair, selectedPalace, onCloseCard
   } = props;
   const term = SOLAR_TERMS[termIndex];
@@ -56,10 +53,6 @@ export function HetuLuoshuControls(props: Props) {
         </div>
         {mode === 'hetu' && (
           <>
-            <button style={toggleButtonStyle(axisOn)} onClick={onAxisToggle}
-                    title={tr('五组配对叠成中轴剖面：天列在左（升），地列在右（降）；镜头回纯正面')}>
-              {tr('中轴剖面')}{axisOn ? tr('·开') : ''}
-            </button>
             <div style={{ fontSize: '11px', color: UI.textMuted }}>{tr('阴阳比 · 天地层距')}</div>
             <input
               type="range" min={0.4} max={2} step={0.05} value={layerZ}

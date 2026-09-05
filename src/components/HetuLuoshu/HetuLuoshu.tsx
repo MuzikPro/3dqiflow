@@ -1,6 +1,6 @@
-import { Suspense, useEffect, useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import * as THREE from 'three';
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Html } from '@react-three/drei';
 import { HETU_PAIRS, LUOSHU_PALACES, HetuPair, LuoshuPalace } from '@/data/hetuLuoshu';
 import { ELEMENT_COLORS } from '@/data/organs';
@@ -31,14 +31,14 @@ const BODY_ANCHOR: Record<string, [number, number, number]> = {
 };
 
 /** 人体联动：每组配对 → 人体对应区（脚本E：天一/地六=肾/膀胱在底…） */
-function BodyLinks({ mode, layerZ, axis, selected }: {
-  mode: HetuLuoshuMode; layerZ: number; axis: boolean;
+function BodyLinks({ mode, layerZ, selected }: {
+  mode: HetuLuoshuMode; layerZ: number;
   selected: HetuPair | null;
 }) {
   const lines = useMemo(() => {
     return HETU_PAIRS.map((pair) => {
       const dp = pairDisplayPos(pair, {
-        axis, merged: mode === 'unity', layerZ,
+        merged: mode === 'unity', layerZ,
         zShift: mode === 'unity' ? -1.9 : 0
       });
       const anchor = BODY_ANCHOR[pair.element];
@@ -54,7 +54,7 @@ function BodyLinks({ mode, layerZ, axis, selected }: {
       line.computeLineDistances();
       return { pair, anchor, line };
     });
-  }, [mode, layerZ, axis]);
+  }, [mode, layerZ]);
   return (
     <group>
       {lines.map(({ pair, anchor, line }) => {
@@ -88,21 +88,6 @@ function HtmlLabel({ position, color, text }: {
       </div>
     </Html>
   );
-}
-
-/** 中轴剖面开着时把镜头钉回纯正面（脚本E：视角切换到纯正面） */
-function AxisFrontRig({ on }: { on: boolean }) {
-  const camera = useThree((s) => s.camera);
-  const controls = useThree((s) => s.controls) as
-    { target: THREE.Vector3; update: () => void } | null;
-  useEffect(() => {
-    if (!on || !controls) return;
-    controls.target.set(0, 0.3, 0);
-    camera.position.set(0, 0.3, 9.5);
-    controls.update();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [on]);
-  return null;
 }
 
 function UnityLinks() {
@@ -139,7 +124,8 @@ function UnityLinks() {
 }
 
 /**
- * 河图洛书 3D 模块（脚本E）：
+ * 河图洛书 3D 模块（脚本E；owner 2026-09-05 撤下「中轴剖面」——五组叠轴的
+ * 变体与轴轮模型重复，河图页只留固定方位的本相）：
  * 河图=生成数理（体），洛书=九宫方位（用）。全部位置固定 —— 圆圈运动，
  * 流动的只有能量粒子与亮度波浪，绝无"平面圆盘旋转"。
  */
@@ -150,7 +136,6 @@ export function HetuLuoshu() {
   const [layerZ, setLayerZ] = useState(1.2);      // 阴阳比：天地层间距（半距）
   const [termIndex, setTermIndex] = useState(() => SOLAR_TERMS.findIndex((t) => t.name === '冬至'));
   const [humanSync, setHumanSync] = useState(false);
-  const [axisOn, setAxisOn] = useState(false); // 中轴剖面（脚本E交互）
   const [selectedPair, setSelectedPair] = useState<HetuPair | null>(null);
   const [selectedPalace, setSelectedPalace] = useState<LuoshuPalace | null>(null);
 
@@ -186,17 +171,14 @@ export function HetuLuoshu() {
           </group>
         )}
         {humanSync && mode !== 'luoshu' && (
-          <BodyLinks mode={mode} layerZ={mode === 'unity' ? 0.7 : layerZ}
-                     axis={mode === 'hetu' && axisOn} selected={selectedPair} />
+          <BodyLinks mode={mode} layerZ={mode === 'unity' ? 0.7 : layerZ} selected={selectedPair} />
         )}
-        <AxisFrontRig on={mode === 'hetu' && axisOn} />
 
         {(mode === 'hetu' || mode === 'unity') && (
           <HetuPairs
             layerZ={mode === 'unity' ? 0.7 : layerZ}
             zShift={mode === 'unity' ? -1.9 : 0}
             merged={mode === 'unity'}
-            axis={mode === 'hetu' && axisOn}
             selected={selectedPair}
             onSelect={(pair) => {
               setSelectedPair(pair);
@@ -231,8 +213,6 @@ export function HetuLuoshu() {
 
       <HetuLuoshuControls
         mode={mode}
-        axisOn={axisOn}
-        onAxisToggle={() => setAxisOn((v) => !v)}
         onModeChange={(next) => {
           setMode(next);
           setSelectedPair(null);

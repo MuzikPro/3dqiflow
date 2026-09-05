@@ -10,7 +10,7 @@ import { BodyFigure } from '../MeridianTheater/BodyFigure';
 import { MeridianLine, QiFlow } from '../three/MeridianSystem';
 import { TWELVE, VESSELS_EIGHT, VESSEL_SIX, HAND_SIX, FOOT_SIX, YIN_SIX, YANG_SIX, NO_MIRROR, meridianColor, VESSEL_META } from '../Acupoints/pointGeometry';
 import { MERIDIAN_META } from '@/data/acupoints';
-import { tr } from '@/i18n';
+import { tr, useLang, setLang } from '@/i18n';
 import {
   ScreensaverSettings, DEFAULT_SETTINGS, ALL_MERIDIANS, loadSettings, saveSettings,
   OrbitStyle, AxisMode, RotationRange, ViewMode
@@ -31,6 +31,8 @@ const BASE_RADIUS = 9.5;     // 经穴图默认机位距离
 const SAFE_RADIUS = 5.2;     // 人体（含手足）外接半径的安全裕量，× 体量
 const TWO_PI = Math.PI * 2;
 const D2R = Math.PI / 180;
+/** App 换语言时整树重挂（App.tsx key={lang}）；面板开合跨重挂保留，切语言不丢面板 */
+let panelOpenAcrossRemount = false;
 const easeInOut = (x: number) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
 
 /** 逐帧驱动：镜头环绕 / 人体自转、手动交互后的柔和接回、视场角 */
@@ -62,7 +64,7 @@ function Driver({ settingsRef, rigRef, manualRef, controlsRef }: {
     const radius = Math.max(BASE_RADIUS * s.camera.distance, SAFE_RADIUS * s.bodyScale);
     let elev = s.camera.elevation;
     let thetaNow: number;
-    if (s.mode === 'cameraOrbit') {
+    if (s.mode !== 'bodyRotation') {
       const rate = s.camera.orbitSpeed * (TWO_PI / 40);      // 1.0x ＝ 40 秒一周；0.1x ＝ 400 秒
       theta.current += dt * rate;
       thetaNow = theta.current;
@@ -105,7 +107,7 @@ function Driver({ settingsRef, rigRef, manualRef, controlsRef }: {
     // ── 人体 rig 朝向 ──
     const rig = rigRef.current;
     if (rig) {
-      if (s.mode === 'bodyRotation') {
+      if (s.mode !== 'cameraOrbit') {
         const b = s.bodyRotation;
         const rate = b.speed * (TWO_PI / 40);
         spin.current += dt * rate;
@@ -245,7 +247,8 @@ function MeridianPicker({ visible, onChange }: { visible: string[]; onChange: (v
   );
 }
 
-function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset }: {
+function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset, lang }: {
+  lang: 'en' | 'zh';
   s: ScreensaverSettings; set: (patch: (d: ScreensaverSettings) => ScreensaverSettings) => void;
   fullscreen: boolean; onFullscreen: () => void; onReset: () => void;
 }) {
@@ -262,7 +265,7 @@ function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset }: {
 
       <H text={tr('视角模式')} />
       <Choice<ViewMode> value={s.mode} onChange={(v) => set((d) => ({ ...d, mode: v }))}
-              options={[['cameraOrbit', tr('镜头环绕')], ['bodyRotation', tr('人体自转')]]} />
+              options={[['cameraOrbit', tr('镜头环绕')], ['bodyRotation', tr('人体自转')], ['combined', tr('环绕 + 自转')]]} />
 
       <H text={tr('人体')} />
       <Row label={tr('体量')}><Slider value={s.bodyScale} min={0.6} max={1.6} step={0.02} format={pct}
@@ -280,7 +283,7 @@ function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset }: {
         <MeridianPicker visible={s.visible} onChange={(v) => set((d) => ({ ...d, visible: v }))} />
       </Row>
 
-      {s.mode === 'cameraOrbit' ? (
+      {s.mode !== 'bodyRotation' && (
         <>
           <H text={tr('镜头环绕')} />
           <Row label={tr('环绕速度')}><Slider value={s.camera.orbitSpeed} min={0.02} max={1} step={0.01} format={(v) => `${v.toFixed(2)}x`}
@@ -296,7 +299,8 @@ function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset }: {
               options={[['horizontal', tr('水平')], ['elevated', tr('俯瞰')], ['spherical', tr('球面漂移')], ['free', tr('自由球面')]]} />
           </Row>
         </>
-      ) : (
+      )}
+      {s.mode !== 'cameraOrbit' && (
         <>
           <H text={tr('人体自转')} />
           <Row label={tr('自转速度')}><Slider value={s.bodyRotation.speed} min={0.02} max={1} step={0.01} format={(v) => `${v.toFixed(2)}x`}
@@ -319,14 +323,21 @@ function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset }: {
                 onChange={(v) => set((d) => ({ ...d, bodyRotation: { ...d.bodyRotation, roll: v } }))} /></Row>
             </>
           )}
-          <Row label={tr('镜头距离')}><Slider value={s.camera.distance} min={0.6} max={2} step={0.02} format={pct}
-            onChange={(v) => set((d) => ({ ...d, camera: { ...d.camera, distance: v } }))} /></Row>
-          <Row label={tr('仰角')}><Slider value={s.camera.elevation} min={-45} max={75} step={1} format={deg}
-            onChange={(v) => set((d) => ({ ...d, camera: { ...d.camera, elevation: v } }))} /></Row>
+          {s.mode === 'bodyRotation' && (
+            <>
+              <Row label={tr('镜头距离')}><Slider value={s.camera.distance} min={0.6} max={2} step={0.02} format={pct}
+                onChange={(v) => set((d) => ({ ...d, camera: { ...d.camera, distance: v } }))} /></Row>
+              <Row label={tr('仰角')}><Slider value={s.camera.elevation} min={-45} max={75} step={1} format={deg}
+                onChange={(v) => set((d) => ({ ...d, camera: { ...d.camera, elevation: v } }))} /></Row>
+            </>
+          )}
         </>
       )}
 
       <H text={tr('显示')} />
+      <Row label={tr('语言')}>
+        <Choice<'en' | 'zh'> value={lang} onChange={(v) => setLang(v)} options={[['en', 'English'], ['zh', '中文']]} />
+      </Row>
       <Row label={tr('视场角')}><Slider value={s.camera.fov} min={25} max={70} step={1} format={deg}
         onChange={(v) => set((d) => ({ ...d, camera: { ...d.camera, fov: v } }))} /></Row>
       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
@@ -348,6 +359,7 @@ function SettingsPanel({ s, set, fullscreen, onFullscreen, onReset }: {
 /* ───────────────── 页面 ───────────────── */
 
 export function CosmicScreensaver({ onExit, returnLabel }: { onExit: () => void; returnLabel: string }) {
+  const lang = useLang();
   const [settings, setSettings] = useState<ScreensaverSettings>(loadSettings);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
@@ -364,7 +376,10 @@ export function CosmicScreensaver({ onExit, returnLabel }: { onExit: () => void;
 
   // ── 界面自动隐去：4 秒无指针动作淡出（含光标）；场景照常运行 ──
   const [uiVisible, setUiVisible] = useState(true);
-  const [panelOpen, setPanelOpen] = useState(false);
+  const [panelOpen, setPanelOpenState] = useState(() => panelOpenAcrossRemount);
+  const setPanelOpen = useCallback((f: boolean | ((v: boolean) => boolean)) => {
+    setPanelOpenState((v) => { const n = typeof f === 'function' ? f(v) : f; panelOpenAcrossRemount = n; return n; });
+  }, []);
   const idleTimer = useRef<number | null>(null);
   const poke = useCallback(() => {
     setUiVisible(true);
@@ -447,7 +462,7 @@ export function CosmicScreensaver({ onExit, returnLabel }: { onExit: () => void;
       </div>
 
       {panelOpen && (
-        <SettingsPanel s={settings} set={set} fullscreen={fullscreen} onFullscreen={toggleFullscreen} onReset={reset} />
+        <SettingsPanel s={settings} set={set} fullscreen={fullscreen} onFullscreen={toggleFullscreen} onReset={reset} lang={lang === 'zh' ? 'zh' : 'en'} />
       )}
     </div>
   );

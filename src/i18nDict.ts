@@ -631,5 +631,7 @@ export const EN: Record<string, string> = {
   '陰蹻': 'Yin Qiao',
   '陽蹻': 'Yang Qiao',
   '陰維': 'Yin Wei',
-  '陽維': 'Yang Wei'
+  '陽維': 'Yang Wei',
+  '环绕 + 自转': 'Orbit + rotation',
+  '语言': 'Language'
 };

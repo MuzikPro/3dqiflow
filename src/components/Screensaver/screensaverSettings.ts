@@ -4,7 +4,7 @@
  */
 import { TWELVE, VESSELS_EIGHT } from '../Acupoints/pointGeometry';
 
-export type ViewMode = 'cameraOrbit' | 'bodyRotation';
+export type ViewMode = 'cameraOrbit' | 'bodyRotation' | 'combined';
 export type OrbitStyle = 'horizontal' | 'elevated' | 'spherical' | 'free';
 export type AxisMode = 'y' | 'x' | 'z' | 'xyzDrift' | 'custom';
 export type RotationRange = 360 | 180 | 90 | 45;
@@ -60,7 +60,7 @@ export function loadSettings(): ScreensaverSettings {
   const c = (raw.camera ?? {}) as Partial<ScreensaverSettings['camera']>;
   const b = (raw.bodyRotation ?? {}) as Partial<ScreensaverSettings['bodyRotation']>;
   return {
-    mode: pick(raw.mode, ['cameraOrbit', 'bodyRotation'] as const, D.mode),
+    mode: pick(raw.mode, ['cameraOrbit', 'bodyRotation', 'combined'] as const, D.mode),
     bodyScale: num(raw.bodyScale, D.bodyScale, 0.6, 1.6),
     bodyOpacity: num(raw.bodyOpacity, D.bodyOpacity, 0.05, 0.4),
     flowSpeed: num(raw.flowSpeed, D.flowSpeed, 0.05, 1),

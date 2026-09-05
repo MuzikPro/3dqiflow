@@ -14,6 +14,8 @@ interface Props {
   cardVisible?: boolean;
   /** 相关条文：跳到条文阅读并定位该条 */
   onOpenArticle?: (id: number) => void;
+  /** 内容卡右侧留白（方义圆运动台占位时加宽） */
+  rightInset?: number;
 }
 
 /** ④ 圆运动定位 chip 色（DELIVERY_WISDOM：运轮红/运轴黄/运枢绿/轴轮并运紫） */
@@ -112,7 +114,7 @@ function FragmentRow({ d }: { d: FormulaDrug }) {
 }
 
 export function FormulaControls(props: Props) {
-  const { formula, onPickFormula, cardVisible = true, onOpenArticle } = props;
+  const { formula, onPickFormula, cardVisible = true, onOpenArticle, rightInset = 180 } = props;
   // 相关条文就地引文：点条号先在卡内展开原文，再决定是否跳条文阅读
   const [openCiteId, setOpenCiteId] = useState<number | null>(null);
   const quote = getPengQuote(formula.name);
@@ -148,7 +150,7 @@ export function FormulaControls(props: Props) {
         className="formula-card"
         style={{
           ...panelStyle,
-          position: 'fixed', left: '300px', right: '180px', top: '90px', bottom: '24px',
+          position: 'fixed', left: '300px', right: `${rightInset}px`, top: '90px', bottom: '24px',
           zIndex: 90, borderRadius: RADIUS.md, padding: '22px 28px',
           maxWidth: '780px', margin: '0 auto', overflowY: 'auto'
         }}

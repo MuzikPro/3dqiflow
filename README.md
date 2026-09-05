@@ -28,7 +28,7 @@ Contributions are held to the same lines — see [CONTRIBUTING.md](CONTRIBUTING.
 
 - **Acupoint Atlas 经穴图** — 362 points across the 14 meridians plus the eight extraordinary vessels, on male and female bodies, with name-only search, qi-flow animation, and a display-only 子午流注 (midnight-noon) meridian clock
 - **Meridian Theater 十二经运行** — 12 meridians as 6 paired 升降 circles (yin ascending / yang descending) flowing at once over a 3D body in canonical order (如环无端), plus a route-mnemonic teaching diagram
-- **Formula Explorer 方剂详解** — 君臣佐使 (sovereign/minister/assistant/envoy) decomposition with per-herb rise/fall roles and derivation trees between related formulas
+- **Formula Explorer 方剂详解** — 君臣佐使 (sovereign/minister/assistant/envoy) decomposition with per-herb rise/fall roles and derivation trees, beside a live axle-wheel stage: selecting a formula plays its fault (axle failing / wheel stalled) and the herbs take their places on the circle to restore it
 - **Article Reader 条文阅读** — dual-pane Shanghan Lun reader: original text and pinyin on the left, a round-motion reading driving a live 3D pathomechanism scene on the right
 - **Axle & Wheel 轴轮模型** — central qi (spleen/stomach) as the axle, liver/heart/lung/kidney as the four wheels, with the ministerial-fire (相火) path, and a 24-solar-term seasonal skin
 - **Hetu & Luoshu 河图洛书** — interactive 3D disks of the model's cosmological source

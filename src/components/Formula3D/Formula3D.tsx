@@ -6,6 +6,8 @@ import { BACKGROUND, THREE_DEFAULTS } from '@/styles/theme';
 import { VariationTree } from './VariationTree';
 import { toggleButtonStyle } from '../UI/panelStyle';
 import { FormulaControls } from './FormulaControls';
+import { FormulaWheel } from './FormulaWheel';
+import { useNarrow } from '@/hooks/useNarrow';
 import { tr } from '@/i18n';
 
 // owner 2026-08-26：3D 球环舞台撤下——本页改为纯内容页：左选方、
@@ -31,6 +33,9 @@ export function Formula3D({ initialFormulaName, onOpenArticle }: Props) {
   };
 
   const { camera, lights } = THREE_DEFAULTS;
+  // 方义圆运动台：宽屏常驻右侧；窄屏让位给内容卡（轴轮模型页仍可看全图）
+  const compact = useNarrow(1240);
+  const wheelVisible = !showTree && !compact;
 
   return (
     <div className="scene-root" style={{ width: '100vw', height: '100vh', background: BACKGROUND.gradient }}>
@@ -71,7 +76,9 @@ export function Formula3D({ initialFormulaName, onOpenArticle }: Props) {
       )}
 
       {/* 看树时只留左侧选方，中部内容卡让位给 3D 树 */}
-      <FormulaControls formula={formula} onPickFormula={pickFormula} cardVisible={!showTree} onOpenArticle={onOpenArticle} />
+      {wheelVisible && <FormulaWheel formula={formula} />}
+      <FormulaControls formula={formula} onPickFormula={pickFormula} cardVisible={!showTree}
+                       onOpenArticle={onOpenArticle} rightInset={wheelVisible ? 370 : 180} />
     </div>
   );
 }

@@ -563,5 +563,15 @@ export const EN: Record<string, string> = {
   '隐私': 'Privacy',
   '学习进度与偏好只保存在本机浏览器（localStorage）。无遥测、无第三方跟踪脚本，不向任何服务器上传使用数据。清除浏览器站点数据即清除全部本地进度。': 'Learning progress and preferences are stored only in this browser (localStorage). No telemetry, no third-party tracking scripts, no usage data uploaded to any server. Clearing the browser\'s site data clears all local progress.',
   '测试期部署设有访问口令（发放的测试账号）——这只是入口的门，不是账号体系：不注册、不记录你的使用，登录状态仅存于你浏览器的签名 cookie（7 天）。': 'The test deployment sits behind an access password (issued test accounts) — a door at the entrance, not an account system: no registration, no usage records; the signed-in state lives only in a signed cookie in your browser (7 days).',
-  '本页与各页同屏提示共同构成本应用的署名与免责呈现（CC BY 4.0 署名义务落实处）。': "This page, together with each page's on-screen notes, constitutes the app's attribution and disclaimer presentation (where the CC BY 4.0 attribution duty is fulfilled)."
+  '本页与各页同屏提示共同构成本应用的署名与免责呈现（CC BY 4.0 署名义务落实处）。': "This page, together with each page's on-screen notes, constitutes the app's attribution and disclaimer presentation (where the CC BY 4.0 attribution duty is fulfilled).",
+
+  // —— 方义圆运动台（FormulaWheel）——
+  '方义圆运动': 'Formula on the wheel',
+  '轴坏': 'axle failing',
+  '轮滞': 'wheel stalled',
+  '轴轮俱病': 'axle and wheel both failing',
+  '枢机不利': 'pivot jammed',
+  '君臣佐使就位': 'herbs taking their places',
+  '复圆': 'circle restored',
+  '重播': 'Replay'
 };

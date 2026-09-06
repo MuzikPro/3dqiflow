@@ -115,8 +115,8 @@ function App() {
         />
       )}
 
-      {/* 全局标题栏 + 场景切换（窄屏：标题缩一号、导航横向滑动，见 index.css）；屏保页自带极淡返回键，标题栏让位 */}
-      {scene !== 'screensaver' && <div
+      {/* 全局标题栏 + 场景切换（窄屏：标题缩一号、导航横向滑动，见 index.css） */}
+      <div
         ref={headerRef}
         className="app-header"
         style={{
@@ -175,7 +175,7 @@ function App() {
         >
           {lang === 'en' ? '中文' : 'EN'}
         </button>
-      </div>}
+      </div>
 
     </div>
   );

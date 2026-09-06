@@ -7,7 +7,6 @@ import { HetuLuoshu } from './components/HetuLuoshu/HetuLuoshu';
 import { PulseTongue } from './components/PulseTongue/PulseTongue';
 import { AcupointAtlas } from './components/Acupoints/AcupointAtlas';
 import { AboutPage } from './components/About/AboutPage';
-import { CosmicScreensaver } from './components/Screensaver/CosmicScreensaver';
 import { StringKey, t, useLang, setLang } from './i18n';
 import { UI, applyUITheme } from './styles/theme';
 
@@ -18,7 +17,7 @@ try { localStorage.removeItem('yy_theme'); } catch { /* ignore */ }
 import { toggleButtonStyle } from './components/UI/panelStyle';
 
 // owner 2026-08-21 (DELIVERY_MERGE_ENERGY): 节气剧场并入轴轮模型'节气'皮肤, 独立场景下线
-type SceneKey = 'axis' | 'meridian' | 'acupoint' | 'formula' | 'hetu' | 'pulse' | 'reader' | 'screensaver' | 'about';
+type SceneKey = 'axis' | 'meridian' | 'acupoint' | 'formula' | 'hetu' | 'pulse' | 'reader' | 'about';
 
 // owner 2026-08-25：经穴图提为第一项（亦为落地页），轴轮模型移到最后
 const SCENE_LABEL_KEYS: Record<SceneKey, StringKey> = {
@@ -29,7 +28,6 @@ const SCENE_LABEL_KEYS: Record<SceneKey, StringKey> = {
   pulse: 'scenePulse',
   reader: 'sceneReader',
   axis: 'sceneAxis',
-  screensaver: 'sceneScreensaver',
   about: 'sceneAbout'
 };
 
@@ -42,8 +40,6 @@ function App() {
   const [pulseRequest, setPulseRequest] = useState<{ pulse: string; tongue: string } | null>(null);
   // 轴轮模型时辰条 → 经穴图子午流注（记住来路，经穴图上给「← 返回」）
   const [clockRequest, setClockRequest] = useState<{ index: number; from: SceneKey } | null>(null);
-  // 屏保来路：退出屏保回到进入前的页面（owner 2026-09-05）
-  const [screensaverFrom, setScreensaverFrom] = useState<SceneKey>('acupoint');
   // 标题栏实高 → CSS 变量：窄屏导航折行时侧栏顶边跟着下移（index.css ≤1024 块）
   const headerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -96,9 +92,6 @@ function App() {
         />
       )}
       {scene === 'about' && <AboutPage />}
-      {scene === 'screensaver' && (
-        <CosmicScreensaver onExit={() => setScene(screensaverFrom)} returnLabel={t(lang, SCENE_LABEL_KEYS[screensaverFrom])} />
-      )}
       {scene === 'formula' && (
         <Formula3D key={formulaRequest ?? 'default'} initialFormulaName={formulaRequest} onOpenArticle={openArticle} />
       )}
@@ -161,11 +154,16 @@ function App() {
               <button
                 key={key}
                 style={toggleButtonStyle(scene === key)}
-                onClick={() => { setClockRequest(null); if (key === 'screensaver') setScreensaverFrom(scene); setScene(key); }}
+                onClick={() => { setClockRequest(null); setScene(key); }}
               >
                 {t(lang, SCENE_LABEL_KEYS[key])}
               </button>
             ))}
+            {/* 天人 · Cosmic Meridian 已独立成站（owner 2026-09-05：主站不再内嵌屏保页） */}
+            <a href="https://cosmic.3dqiflow.com/" target="_blank" rel="noopener" style={{ ...toggleButtonStyle(false), textDecoration: 'none' }}
+               title={t(lang, 'sceneScreensaver')}>
+              {t(lang, 'sceneScreensaver')} ↗
+            </a>
           </div>
         </div>
         {/* 右侧：中/英切换（owner 2026-09-03；主题按钮仍隐藏，SettingsModal 待重新安置） */}

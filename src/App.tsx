@@ -141,14 +141,21 @@ function App() {
         }}
       >
         <div className="app-header-left" style={{ display: 'flex', alignItems: 'center', gap: '20px', minWidth: 0, flex: 1 }}>
-          <div>
+          {/* 标题＝回首页键（owner 2026-09-05）：任何页面点左上角回到经穴图 */}
+          <button
+            type="button"
+            className="app-home"
+            onClick={() => { setClockRequest(null); setScene('acupoint'); }}
+            title={lang === 'zh' ? '回到首页（经穴图）' : 'Home (Qi Flow)'}
+            style={{ all: 'unset', cursor: 'pointer', pointerEvents: 'auto', display: 'block', textAlign: 'left' }}
+          >
             <div className="app-title" style={{ fontSize: '20px', color: UI.accent, letterSpacing: lang === 'zh' ? '4px' : '1px', whiteSpace: 'nowrap' }}>
               {t(lang, 'appTitle')}
             </div>
             <div className="app-subtitle" style={{ fontSize: '11px', color: UI.textMuted, letterSpacing: lang === 'zh' ? '2px' : '0.5px' }}>
               {t(lang, 'appSubtitle')}
             </div>
-          </div>
+          </button>
           <div className="app-nav" style={{ display: 'flex', gap: '8px', pointerEvents: 'auto' }}>
             {(Object.keys(SCENE_LABEL_KEYS) as SceneKey[]).map((key) => (
               <button
